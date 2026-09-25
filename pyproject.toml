@@ -25,8 +25,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ffram/ffram-cli"
-Repository = "https://github.com/ffram/ffram-cli.git"
+Homepage = "https://github.com/Rebuild-It-Labs/FFram"
+Repository = "https://github.com/Rebuild-It-Labs/FFram.git"
 
 [project.scripts]
 ffram = "ffram.cli:main"
