@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ffram"
+version = "1.0.0"
+description = "ffram - 102 High-Performance Media Operations across 18 Categories"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+  { name="ffram authors", email="author@example.com" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Topic :: Multimedia :: Video",
+]
+dependencies = [
+    "rich>=13.0.0",
+    "InquirerPy>=0.3.4",
+    "pyfiglet>=1.0.2"
+]
+
+[project.urls]
+Homepage = "https://github.com/ffram/ffram-cli"
+Repository = "https://github.com/ffram/ffram-cli.git"
+
+[project.scripts]
+ffram = "ffram.cli:main"
