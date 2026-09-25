@@ -1,68 +1,37 @@
-"""
-operations/audio_filter.py - Audio processing filters (Operations 46-53).
-Volume, channels, sample rate, normalization, and fades.
-"""
+"""Audio processing filter operations."""
 
 from pathlib import Path
 from ffram.categories.base import BaseOperation, OperationInfo, OperationResult
-from ffram.core.runner import run_ffmpeg
-from ffram.ui.progress_bar import FFmpegProgressBar
-from ffram.ui.console import print_command, format_elapsed
 
 
 class AudioFilterOps(BaseOperation):
 
-    def get_operations(self) -> list[OperationInfo]:
+    def get_operations(self):
+        A = "Audio Processing"
         return [
-            OperationInfo(46, "Increase volume (2x)", "Double the audio volume", "Audio Processing"),
-            OperationInfo(47, "Decrease volume (50%)", "Halve the audio volume", "Audio Processing"),
-            OperationInfo(48, "Convert to mono", "Convert audio to single channel", "Audio Processing"),
-            OperationInfo(49, "Convert to stereo", "Convert audio to two channels", "Audio Processing"),
-            OperationInfo(50, "Change sample rate (44100 Hz)", "Resample audio to 44.1kHz", "Audio Processing"),
-            OperationInfo(51, "Normalize audio (EBU R128)", "Loudness normalization to broadcast standard", "Audio Processing"),
-            OperationInfo(52, "Fade audio in (3s)", "Fade audio in over 3 seconds", "Audio Processing"),
-            OperationInfo(53, "Fade audio out (3s)", "Fade audio out over last 3 seconds", "Audio Processing"),
+            OperationInfo(46, "Volume Up (2x)", "Double the audio volume", A),
+            OperationInfo(47, "Volume Down (50%)", "Halve the audio volume", A),
+            OperationInfo(48, "Convert to Mono", "Single channel audio", A),
+            OperationInfo(49, "Convert to Stereo", "Two channel audio", A),
+            OperationInfo(50, "Resample to 44100 Hz", "Change sample rate to 44.1 kHz", A),
+            OperationInfo(51, "Normalize Audio (EBU R128)", "Broadcast standard loudness", A),
+            OperationInfo(52, "Fade In (3 seconds)", "Gradual audio fade in", A),
+            OperationInfo(53, "Fade Out (3 seconds)", "Gradual audio fade out", A),
         ]
 
-    def execute(self, operation_id: int, params: dict) -> OperationResult:
-        input_path = Path(params["input_path"])
+    def execute(self, operation_id, params):
+        i = str(Path(params["input_path"]))
         duration = params.get("duration", 0)
-
-        # For fade out, calculate start time
-        fade_out_start = max(0, duration - 3) if duration > 3 else 0
+        fade_start = max(0, duration - 3) if duration > 3 else 0
 
         cmd_map = {
-            46: (["-i", str(input_path), "-af", "volume=2", "-c:v", "copy"], "_loud"),
-            47: (["-i", str(input_path), "-af", "volume=0.5", "-c:v", "copy"], "_quiet"),
-            48: (["-i", str(input_path), "-ac", "1"], "_mono"),
-            49: (["-i", str(input_path), "-ac", "2"], "_stereo"),
-            50: (["-i", str(input_path), "-ar", "44100"], "_44100hz"),
-            51: (["-i", str(input_path), "-af", "loudnorm", "-c:v", "copy"], "_normalized"),
-            52: (["-i", str(input_path), "-af", "afade=t=in:st=0:d=3"], "_fadein"),
-            53: (["-i", str(input_path), "-af", f"afade=t=out:st={fade_out_start}:d=3"], "_fadeout"),
+            46: (["-i", i, "-af", "volume=2", "-c:v", "copy"], "_loud", ".mp4"),
+            47: (["-i", i, "-af", "volume=0.5", "-c:v", "copy"], "_quiet", ".mp4"),
+            48: (["-i", i, "-ac", "1"], "_mono", ".mp4"),
+            49: (["-i", i, "-ac", "2"], "_stereo", ".mp4"),
+            50: (["-i", i, "-ar", "44100"], "_44100hz", ".mp4"),
+            51: (["-i", i, "-af", "loudnorm", "-c:v", "copy"], "_normalized", ".mp4"),
+            52: (["-i", i, "-af", "afade=t=in:st=0:d=3"], "_fadein", ".mp4"),
+            53: (["-i", i, "-af", f"afade=t=out:st={fade_start}:d=3"], "_fadeout", ".mp4"),
         }
-
-        if operation_id not in cmd_map:
-            return OperationResult(False, f"Unknown operation ID: {operation_id}")
-
-        cmd_args, suffix = cmd_map[operation_id]
-        output_path = params.get("output_path") or self._build_output_path(input_path, suffix, ".mp4")
-        cmd_args.append(str(output_path))
-
-        print_command(["ffmpeg", "-y"] + cmd_args)
-
-        progress = FFmpegProgressBar(description="Processing audio")
-        progress.start()
-
-        result = run_ffmpeg(cmd_args, duration=duration, on_progress=progress.update)
-
-        if result.success:
-            progress.finish()
-            return OperationResult(
-                True,
-                f"Audio processed → {output_path.name} ({format_elapsed(result.elapsed_seconds)})",
-                output_path, result.elapsed_seconds, result.command,
-            )
-        else:
-            progress.error()
-            return OperationResult(False, f"Failed: {result.error_message}", command=result.command)
+        return self.run_map(operation_id, params, cmd_map, "Processing audio")

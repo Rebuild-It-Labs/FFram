@@ -1,9 +1,8 @@
-"""CLI entry point."""
+"""CLI entry point for ffram."""
 
 import sys
 import os
 
-# Force UTF-8 encoding on Windows
 if os.name == "nt":
     os.system("chcp 65001 > NUL 2>&1")
     if hasattr(sys.stdout, "reconfigure"):
@@ -18,32 +17,28 @@ from InquirerPy import inquirer
 
 from ffram.ui.console import console, print_banner
 from ffram.ui.menu import (
-    show_main_menu,
-    show_category_operations,
-    show_search_menu,
-    show_gpu_info,
-    execute_operation,
+    show_main_menu, show_category_operations,
+    show_search_menu, show_gpu_info, execute_operation,
 )
 
 
 def main():
-    """Main loop."""
     parser = argparse.ArgumentParser(description="ffram - Fast FFmpeg Renderer for Audio and Moving-pictures")
     parser.add_argument("--file", "-f", help="Direct input file path")
     args, _ = parser.parse_known_args()
 
-    preselected_file = None
+    preselected = None
     if args.file:
         candidate = Path(args.file.strip('"').strip("'"))
         if candidate.exists():
-            preselected_file = candidate
+            preselected = candidate
 
     try:
         os.system("cls" if os.name == "nt" else "clear")
         print_banner()
 
-        if preselected_file:
-            console.print(f"  [dim]Pre-selected file:[/dim] [path]{preselected_file}[/path]\n")
+        if preselected:
+            console.print(f"  [dim]Pre-selected file:[/dim] [path]{preselected}[/path]\n")
 
         while True:
             try:
@@ -52,27 +47,23 @@ def main():
                 if category == "__EXIT__":
                     console.print("\n  [dim]Goodbye![/dim]\n")
                     break
-
                 elif category == "__SEARCH__":
                     op_id = show_search_menu()
                     if op_id and op_id != "__BACK__":
-                        execute_operation(op_id, initial_file=preselected_file)
-                        preselected_file = None
-
+                        execute_operation(op_id, initial_file=preselected)
+                        preselected = None
                 elif category == "__GPU_INFO__":
                     show_gpu_info()
-                    inquirer.text(message="Press Enter to return to main menu...", default="").execute()
-
+                    inquirer.text(message="Press Enter to return...", default="").execute()
                 else:
-                    # User picked a category from the 18 categories
                     while True:
                         op_id = show_category_operations(category)
                         if not op_id or op_id == "__BACK__":
                             break
-                        execute_operation(op_id, initial_file=preselected_file)
-                        preselected_file = None
-                        break  # Return to main menu after running the operation
-                
+                        execute_operation(op_id, initial_file=preselected)
+                        preselected = None
+                        break
+
             except KeyboardInterrupt:
                 console.print("\n  [warning]Returning to main menu...[/warning]")
                 continue

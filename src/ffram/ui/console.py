@@ -1,23 +1,16 @@
-"""
-ui/console.py - Rich console styling, banners, headers, and formatted output.
-"""
+"""Console output, theming, and formatting helpers."""
 
 import sys
 import os
 
-# Force UTF-8 on Windows before importing Rich
 if os.name == "nt":
     os.environ.setdefault("PYTHONUTF8", "1")
-    if hasattr(sys.stdout, "reconfigure"):
-        try:
-            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-        except Exception:
-            pass
-    if hasattr(sys.stderr, "reconfigure"):
-        try:
-            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
-        except Exception:
-            pass
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8", errors="replace")
+            except Exception:
+                pass
 
 from rich.console import Console
 from rich.panel import Panel
@@ -27,7 +20,6 @@ from rich.theme import Theme
 from rich import box
 import pyfiglet
 
-# Custom theme for the toolkit
 THEME = Theme({
     "title": "bold bright_cyan",
     "subtitle": "dim cyan",
@@ -47,32 +39,16 @@ console = Console(theme=THEME)
 
 
 def print_banner():
-    """Print banner."""
-    ascii_art = pyfiglet.figlet_format("ffram", font="slant")
-    banner_text = Text(ascii_art, style="bold bright_cyan")
-
-    console.print(banner_text, justify="center")
-    console.print(
-        "[subtitle]=== Fast FFmpeg Renderer for Audio and Moving-pictures ===[/subtitle]",
-        justify="center",
-    )
-    console.print(
-        "[dim]102 Media Processing Operations | 18 Specialized Categories | GPU Accelerated[/dim]",
-        justify="center",
-    )
+    art = pyfiglet.figlet_format("ffram", font="slant")
+    console.print(Text(art, style="bold bright_cyan"), justify="center")
+    console.print("[subtitle]=== Fast FFmpeg Renderer for Audio and Moving-pictures ===[/subtitle]", justify="center")
+    console.print("[dim]102 Operations | 18 Categories | GPU Accelerated[/dim]", justify="center")
     console.print()
 
 
 def print_media_info(info):
-    """Print media info."""
-    table = Table(
-        title=f"[FILE] {info.file_path.name}",
-        box=box.ROUNDED,
-        border_style="bright_cyan",
-        title_style="bold bright_white",
-        padding=(0, 1),
-    )
-
+    table = Table(title=f"[FILE] {info.file_path.name}", box=box.ROUNDED,
+                  border_style="bright_cyan", title_style="bold bright_white", padding=(0, 1))
     table.add_column("Property", style="bright_cyan", min_width=16)
     table.add_column("Value", style="bright_white", min_width=30)
 
@@ -91,66 +67,45 @@ def print_media_info(info):
         table.add_row("Pixel Format", vs.pix_fmt)
 
     if info.has_audio:
-        aus = info.audio_stream
+        a = info.audio_stream
         table.add_row("", "")
-        table.add_row("Audio Codec", aus.codec_name)
-        table.add_row("Sample Rate", f"{aus.sample_rate} Hz")
-        table.add_row("Channels", f"{aus.channels} ({aus.channel_layout})" if aus.channel_layout else str(aus.channels))
-        if aus.bitrate:
-            table.add_row("Audio Bitrate", f"{aus.bitrate // 1000} kbps")
+        table.add_row("Audio Codec", a.codec_name)
+        table.add_row("Sample Rate", f"{a.sample_rate} Hz")
+        table.add_row("Channels", f"{a.channels} ({a.channel_layout})" if a.channel_layout else str(a.channels))
+        if a.bitrate:
+            table.add_row("Audio Bitrate", f"{a.bitrate // 1000} kbps")
 
     if info.subtitle_streams:
         table.add_row("", "")
-        for i, sub in enumerate(info.subtitle_streams):
-            lang = sub.language if sub.language else "unknown"
-            table.add_row(f"Subtitle {i + 1}", f"{sub.codec_name} ({lang})")
+        for idx, sub in enumerate(info.subtitle_streams):
+            lang = sub.language or "unknown"
+            table.add_row(f"Subtitle {idx + 1}", f"{sub.codec_name} ({lang})")
 
     console.print(table)
     console.print()
 
 
-def print_success(message: str):
-    console.print(f"\n  [success][OK] {message}[/success]\n")
+def print_success(msg):
+    console.print(f"\n  [success][OK] {msg}[/success]\n")
 
+def print_error(msg):
+    console.print(f"\n  [error][ERR] {msg}[/error]\n")
 
-def print_error(message: str):
-    console.print(f"\n  [error][ERR] {message}[/error]\n")
+def print_warning(msg):
+    console.print(f"\n  [warning][WARN] {msg}[/warning]\n")
 
-
-def print_warning(message: str):
-    console.print(f"\n  [warning][WARN] {message}[/warning]\n")
-
-
-def print_info(message: str):
-    console.print(f"\n  [info][i] {message}[/info]\n")
-
+def print_info(msg):
+    console.print(f"\n  [info]{msg}[/info]\n")
 
 def print_command(cmd):
-    """Print the FFmpeg command being executed, automatically quoting paths with spaces."""
     import subprocess
-    if isinstance(cmd, (list, tuple)):
-        cmd_str = subprocess.list2cmdline([str(arg) for arg in cmd])
-    else:
-        cmd_str = str(cmd)
-    console.print(
-        Panel(
-            f"[command]{cmd_str}[/command]",
-            title="[dim]FFmpeg Command[/dim]",
-            border_style="dim yellow",
-            padding=(0, 1),
-        )
-    )
+    s = subprocess.list2cmdline([str(a) for a in cmd]) if isinstance(cmd, (list, tuple)) else str(cmd)
+    console.print(Panel(f"[command]{s}[/command]", title="[dim]FFmpeg Command[/dim]", border_style="dim yellow", padding=(0, 1)))
 
-
-def print_section(title: str):
-    """Print a section header."""
+def print_section(title):
     console.print(f"\n  [category]> {title}[/category]")
 
-
-def format_elapsed(seconds: float) -> str:
-    """Format elapsed time for display."""
+def format_elapsed(seconds):
     if seconds < 60:
         return f"{seconds:.1f}s"
-    m = int(seconds) // 60
-    s = seconds % 60
-    return f"{m}m {s:.1f}s"
+    return f"{int(seconds) // 60}m {seconds % 60:.1f}s"

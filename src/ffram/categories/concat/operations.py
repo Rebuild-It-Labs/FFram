@@ -1,106 +1,56 @@
-"""
-operations/concat.py - Video concatenation and merging (Operations 73-75).
-"""
+"""Video concatenation and joining operations."""
 
-import tempfile
 from pathlib import Path
 from ffram.categories.base import BaseOperation, OperationInfo, OperationResult
-from ffram.core.runner import run_ffmpeg
-from ffram.ui.progress_bar import FFmpegProgressBar
-from ffram.ui.console import print_command, format_elapsed
+
+VMULTI = {"needs_second_input": True, "second_input_label": "Video Files to Join", "second_input_types": ["video_multi"]}
+VSINGLE = {"needs_second_input": True, "second_input_label": "Second Video", "second_input_types": ["video"]}
 
 
 class ConcatOps(BaseOperation):
 
-    def get_operations(self) -> list[OperationInfo]:
+    def get_operations(self):
+        C = "Combine Videos"
         return [
-            OperationInfo(73, "Concatenate videos (same codec)", "Lossless concat using demuxer", "Combine Videos",
-                          needs_second_input=True, second_input_label="Video Files to Join",
-                          second_input_types=["video_multi"]),
-            OperationInfo(74, "Concatenate videos (different codecs)", "Re-encode and join different videos",
-                          "Combine Videos", needs_second_input=True, second_input_label="Video Files to Join",
-                          second_input_types=["video_multi"]),
-            OperationInfo(75, "Join two videos (filter_complex)", "Concat two videos using filter",
-                          "Combine Videos", needs_second_input=True, second_input_label="Second Video",
-                          second_input_types=["video"]),
+            OperationInfo(73, "Concat (Same Codec)", "Lossless concat via demuxer", C, **VMULTI),
+            OperationInfo(74, "Concat (Re-encode)", "Join different codecs with re-encoding", C, **VMULTI),
+            OperationInfo(75, "Join Two Videos", "Concat two videos using filter_complex", C, **VSINGLE),
         ]
 
-    def execute(self, operation_id: int, params: dict) -> OperationResult:
+    def _write_concat_list(self, input_path, file_list):
+        """Write a temp concat list file and return its path."""
+        list_file = input_path.parent / "_concat_list.txt"
+        files = [Path(f) if isinstance(f, str) else f for f in file_list]
+        with open(list_file, "w", encoding="utf-8") as fh:
+            for f in files:
+                escaped = str(f).replace("\\", "/").replace("'", "'\\''")
+                fh.write(f"file '{escaped}'\n")
+        return list_file, files
+
+    def execute(self, operation_id, params):
         input_path = Path(params["input_path"])
         duration = params.get("duration", 0)
 
         if operation_id in (73, 74):
-            # Multiple files - create concat list
-            file_list = params.get("file_list", [input_path])
-            if isinstance(file_list[0], str):
-                file_list = [Path(f) for f in file_list]
-
-            # Create temporary concat list file
-            list_file = input_path.parent / "_concat_list.txt"
-            with open(list_file, "w", encoding="utf-8") as f:
-                for file in file_list:
-                    # Use forward slashes and escape single quotes for ffmpeg
-                    escaped = str(file).replace("\\", "/").replace("'", "'\\''")
-                    f.write(f"file '{escaped}'\n")
-
+            list_file, files = self._write_concat_list(input_path, params.get("file_list", [input_path]))
             output_path = params.get("output_path") or self._build_output_path(input_path, "_merged", ".mp4")
-
-            if operation_id == 73:
-                cmd_args = ["-f", "concat", "-safe", "0", "-i", str(list_file),
-                            "-c", "copy", str(output_path)]
-            else:
-                cmd_args = ["-f", "concat", "-safe", "0", "-i", str(list_file),
-                            "-c:v", "libx264", "-c:a", "aac", str(output_path)]
-
-            print_command(["ffmpeg", "-y"] + cmd_args)
-
-            progress = FFmpegProgressBar(description="Merging videos")
-            progress.start()
-
-            result = run_ffmpeg(cmd_args, duration=duration, on_progress=progress.update)
-
-            # Clean up temp list file
+            codec = ["-c", "copy"] if operation_id == 73 else ["-c:v", "libx264", "-c:a", "aac"]
+            cmd_args = ["-f", "concat", "-safe", "0", "-i", str(list_file)] + codec + [str(output_path)]
+            result = self.run_op(cmd_args, output_path, duration, "Merging videos")
             try:
                 list_file.unlink()
             except OSError:
                 pass
+            return result
 
-            if result.success:
-                progress.finish()
-                return OperationResult(
-                    True,
-                    f"Merged {len(file_list)} videos → {output_path.name} ({format_elapsed(result.elapsed_seconds)})",
-                    output_path, result.elapsed_seconds, result.command,
-                )
-            progress.error()
-            return OperationResult(False, f"Failed: {result.error_message}", command=result.command)
-
-        elif operation_id == 75:
-            second_input = Path(params["second_input_path"])
+        if operation_id == 75:
+            second = str(Path(params["second_input_path"]))
             output_path = params.get("output_path") or self._build_output_path(input_path, "_joined", ".mp4")
-
             cmd_args = [
-                "-i", str(input_path), "-i", str(second_input),
-                "-filter_complex",
-                "[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[v][a]",
+                "-i", str(input_path), "-i", second,
+                "-filter_complex", "[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[v][a]",
                 "-map", "[v]", "-map", "[a]", str(output_path),
             ]
-
-            print_command(["ffmpeg", "-y"] + cmd_args)
-
-            progress = FFmpegProgressBar(description="Joining videos")
-            progress.start()
-
-            result = run_ffmpeg(cmd_args, duration=duration, on_progress=progress.update)
-
-            if result.success:
-                progress.finish()
-                return OperationResult(
-                    True,
-                    f"Joined → {output_path.name} ({format_elapsed(result.elapsed_seconds)})",
-                    output_path, result.elapsed_seconds, result.command,
-                )
-            progress.error()
-            return OperationResult(False, f"Failed: {result.error_message}", command=result.command)
+            return self.run_op(cmd_args, output_path, duration, "Joining videos")
 
         return OperationResult(False, f"Unknown operation ID: {operation_id}")
