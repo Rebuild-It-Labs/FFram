@@ -1,5 +1,5 @@
 """
-operations/cut_trim.py - Video cutting and trimming (Operations 38-42).
+Video cutting and trimming operations.
 """
 
 from pathlib import Path
