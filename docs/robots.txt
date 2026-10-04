@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Direct search engine bots to your sitemap to help them understand your site structure
+Sitemap: https://rebuild-it-labs.github.io/FFram/sitemap.xml
