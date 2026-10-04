@@ -42,7 +42,6 @@ def print_banner():
     art = pyfiglet.figlet_format("ffram", font="slant")
     console.print(Text(art, style="bold bright_cyan"), justify="center")
     console.print("[subtitle]=== Fast FFmpeg Renderer for Audio and Moving-pictures ===[/subtitle]", justify="center")
-    console.print("[dim]102 Operations | 18 Categories | GPU Accelerated[/dim]", justify="center")
     console.print()
 
 
