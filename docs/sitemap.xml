@@ -12,7 +12,7 @@
       <priority>1.0</priority>
    </url>
 
-   <!-- Explicitly define the index file path to ensure no duplicate content penalties -->
+   <!-- index.html -->
    <url>
       <loc>https://rebuild-it-labs.github.io/FFram/index.html</loc>
       <lastmod>2026-10-04</lastmod>
