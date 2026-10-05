@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "ffram"
-version = "1.0.1"
+dynamic = ["version"]
 description = "ffram - High Performance Media Operations across Specialized Media Categories"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -31,3 +31,6 @@ Repository = "https://github.com/Rebuild-It-Labs/FFram.git"
 
 [project.scripts]
 ffram = "ffram.cli:main"
+
+[tool.hatch.version]
+source = "vcs"
