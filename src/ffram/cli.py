@@ -19,13 +19,23 @@ from ffram.ui.console import console, print_banner
 from ffram.ui.menu import (
     show_main_menu, show_category_operations,
     show_search_menu, show_gpu_info, execute_operation,
+    show_recent_files,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(description="ffram - Fast FFmpeg Renderer for Audio and Moving-pictures")
     parser.add_argument("--file", "-f", help="Direct input file path")
+    parser.add_argument("--worker", action="store_true", help="Start as a cluster worker node")
+    parser.add_argument("--port", type=int, default=8000, help="Port for worker node")
     args, _ = parser.parse_known_args()
+
+    if args.worker:
+        from ffram.core.cluster import WorkerNode
+        console.print(f"[bold green]Starting Worker Node on port {args.port}...[/bold green]")
+        worker = WorkerNode(port=args.port)
+        worker.start()
+        sys.exit(0)
 
     preselected = None
     if args.file:
@@ -52,6 +62,11 @@ def main():
                     if op_id and op_id != "__BACK__":
                         execute_operation(op_id, initial_file=preselected)
                         preselected = None
+                elif category == "__RECENT__":
+                    recent_file = show_recent_files()
+                    if recent_file and recent_file != "__BACK__":
+                        preselected = Path(recent_file)
+                        console.print(f"\n  [dim]Pre-selected file:[/dim] [path]{preselected}[/path]\n")
                 elif category == "__GPU_INFO__":
                     show_gpu_info()
                     inquirer.text(message="Press Enter to return...", default="").execute()

@@ -1,5 +1,11 @@
 User-agent: *
 Allow: /
 
-# Direct search engine bots to your sitemap to help them understand your site structure
+# Disallow internal tooling directories (if any)
+# Disallow: /private/
+
+# Crawl delay to be friendly to small hosts
+Crawl-delay: 10
+
+# Sitemap location (absolute URL for search engines)
 Sitemap: https://rebuild-it-labs.github.io/FFram/sitemap.xml

@@ -15,6 +15,9 @@ class ScreenshotGifOps(BaseOperation):
             OperationInfo(70, "Screenshot Every Second", "1 fps frame extraction", S),
             OperationInfo(71, "Video to GIF", "Animated GIF at 10 fps, 640px wide", S),
             OperationInfo(72, "GIF to MP4", "Convert animated GIF to video", S),
+            OperationInfo(73, "Video to GIF (High FPS)", "Animated GIF at 24 fps, 800px wide", S),
+            OperationInfo(74, "Video to WebP", "Animated WebP (efficient alternative to GIF)", S),
+            OperationInfo(75, "GIF to WebM", "Convert animated GIF to WebM", S),
         ]
 
     def _extract_frames(self, input_path, fps_filter, suffix, ext, params):
@@ -60,5 +63,20 @@ class ScreenshotGifOps(BaseOperation):
             output_path = params.get("output_path") or self._build_output_path(input_path, "_from_gif", ".mp4")
             cmd_args = ["-i", i, "-movflags", "faststart", "-pix_fmt", "yuv420p", str(output_path)]
             return self.run_op(cmd_args, output_path, duration, "Converting GIF to MP4")
+
+        if operation_id == 73:
+            output_path = params.get("output_path") or self._build_output_path(input_path, "_highfps", ".gif")
+            cmd_args = ["-i", i, "-vf", "fps=24,scale=800:-1", str(output_path)]
+            return self.run_op(cmd_args, output_path, duration, "Creating High FPS GIF")
+
+        if operation_id == 74:
+            output_path = params.get("output_path") or self._build_output_path(input_path, "", ".webp")
+            cmd_args = ["-i", i, "-vcodec", "libwebp", "-lossless", "0", "-qscale", "80", "-preset", "default", "-loop", "0", "-an", "-vsync", "0", str(output_path)]
+            return self.run_op(cmd_args, output_path, duration, "Creating Animated WebP")
+
+        if operation_id == 75:
+            output_path = params.get("output_path") or self._build_output_path(input_path, "_from_gif", ".webm")
+            cmd_args = ["-i", i, "-c:v", "libvpx-vp9", "-crf", "30", "-b:v", "0", str(output_path)]
+            return self.run_op(cmd_args, output_path, duration, "Converting GIF to WebM")
 
         return OperationResult(False, f"Unknown operation ID: {operation_id}")

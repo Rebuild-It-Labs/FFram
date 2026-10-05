@@ -169,23 +169,87 @@ class MediaInfo:
 
 def probe(file_path: str | Path, ffprobe_path: str = "ffprobe") -> MediaInfo:
     """
-    Run ffprobe on a media file and return structured MediaInfo.
-    
-    Args:
-        file_path: Path to the media file.
-        ffprobe_path: Path to the ffprobe executable.
-    
-    Returns:
-        MediaInfo dataclass with all parsed information.
-    
-    Raises:
-        FileNotFoundError: If the file does not exist.
-        RuntimeError: If ffprobe fails to execute.
+    Run probe on a media file and return structured MediaInfo.
+    Uses PyAV for instant metadata extraction, with a fallback to ffprobe.
     """
+    import os
     file_path = Path(file_path)
     if not file_path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
 
+    try:
+        import av
+        with av.open(str(file_path)) as container:
+            streams = []
+            for s in container.streams:
+                duration = float(s.duration * s.time_base) if s.duration and s.time_base else 0.0
+                ctx = s.codec_context
+                if s.type == "video":
+                    fps = float(s.average_rate) if s.average_rate else 0.0
+                    streams.append(StreamInfo(
+                        index=s.index,
+                        codec_type="video",
+                        codec_name=ctx.name if ctx else "",
+                        codec_long_name=ctx.long_name if ctx else "",
+                        width=ctx.width if ctx else 0,
+                        height=ctx.height if ctx else 0,
+                        fps=fps,
+                        pix_fmt=ctx.pix_fmt if ctx else "",
+                        bitrate=ctx.bit_rate if ctx else 0,
+                        duration=duration,
+                        language=s.metadata.get("language", ""),
+                        title=s.metadata.get("title", "")
+                    ))
+                elif s.type == "audio":
+                    streams.append(StreamInfo(
+                        index=s.index,
+                        codec_type="audio",
+                        codec_name=ctx.name if ctx else "",
+                        codec_long_name=ctx.long_name if ctx else "",
+                        sample_rate=ctx.sample_rate if ctx else 0,
+                        channels=ctx.channels if ctx else 0,
+                        bitrate=ctx.bit_rate if ctx else 0,
+                        duration=duration,
+                        language=s.metadata.get("language", ""),
+                        title=s.metadata.get("title", "")
+                    ))
+                elif s.type == "subtitle":
+                    streams.append(StreamInfo(
+                        index=s.index,
+                        codec_type="subtitle",
+                        codec_name=ctx.name if ctx else "",
+                        duration=duration,
+                        language=s.metadata.get("language", ""),
+                        title=s.metadata.get("title", "")
+                    ))
+                else:
+                    streams.append(StreamInfo(
+                        index=s.index,
+                        codec_type="data",
+                        codec_name=ctx.name if ctx else "",
+                        duration=duration,
+                    ))
+
+            container_duration = float(container.duration / av.time_base) if container.duration else 0.0
+            size = os.path.getsize(file_path)
+            bitrate = container.bit_rate or 0
+            
+            return MediaInfo(
+                file_path=file_path,
+                format_name=container.format.name,
+                format_long_name=container.format.long_name,
+                duration=container_duration,
+                size=size,
+                bitrate=bitrate,
+                nb_streams=len(streams),
+                streams=streams,
+                metadata=container.metadata,
+            )
+    except Exception as e:
+        # Fallback to ffprobe if PyAV is not installed or fails for this format
+        pass
+
+    # --- FFprobe fallback ---
     cmd = [
         ffprobe_path,
         "-v", "quiet",

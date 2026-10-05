@@ -10,15 +10,23 @@
     <meta name="keywords"
         content="FFmpeg, Python, video processing, audio processing, multimedia, FFram, Rebuild It Labs">
     <meta name="author" content="Rebuild It Labs">
+    <meta name="robots" content="index,follow">
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
     <meta name="google-site-verification" content="4t6ls2rwW57aO23YnuHKL_u-BzxoHCD-yAvJbbFSz6E" />
 </head>
 
 <body>
     <header>
         <div class="container header-content">
-            <h1><a href="/">FFram</a></h1>
-            <nav>
+            <div>
+                <h1><a href="/">FFram</a></h1>
+                <div style="margin-top: 5px;">
+                    <img src="https://img.shields.io/badge/Open%20Source-%E2%99%A5-green" alt="Open Source">
+                    <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="Python 3.8+">
+                </div>
+            </div>
+            <nav role="navigation">
                 <ul>
                     <li><a href="#about">About</a></li>
                     <li><a href="#usage">Usage</a></li>
@@ -26,11 +34,17 @@
                     <li><a href="#contribute">Contribute</a></li>
                 </ul>
             </nav>
+            <button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
         </div>
     </header>
 
     <div class="container main-layout">
         <main>
+            <section id="hero" style="text-align: center; margin-bottom: 40px;">
+                <img src="images/hero.gif" alt="Hero GIF placeholder"
+                    style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            </section>
+
             <section id="about" class="intro-section">
                 <h2>Fast FFmpeg Renderer for Audio and Moving-pictures</h2>
                 <p>FFram is a fast, highly interactive Terminal User Interface (TUI) for executing complex media
@@ -56,15 +70,40 @@
 
             <section id="features">
                 <h2>Why FFram?</h2>
-                <ul>
-                    <li><strong>102 High-Performance Operations:</strong> Across 18 specialized media categories.</li>
-                    <li><strong>Interactive TUI:</strong> Built with InquirerPy and rich, featuring fuzzy search to
-                        instantly find operations.</li>
-                    <li><strong>Native File Pickers:</strong> Press Enter to browse visually for input and output files.
-                    </li>
-                    <li><strong>Hardware Acceleration:</strong> Auto-detection for NVIDIA NVENC, Intel QSV, and AMD AMF.
-                    </li>
+                <ul class="feature-list">
+                    <li class="feature-card"><strong> High-Performance Operations</strong> Across specialized media
+                        categories.</li>
+                    <li class="feature-card"><strong> Interactive TUI</strong> Built with InquirerPy and rich, featuring
+                        fuzzy search to instantly find operations.</li>
+                    <li class="feature-card"><strong> Native File Pickers</strong> Press Enter to browse visually for
+                        input and output files.</li>
+                    <li class="feature-card"><strong> Hardware Acceleration</strong> Auto-detection for NVIDIA NVENC,
+                        Intel QSV, and AMD AMF.</li>
                 </ul>
+            </section>
+
+            <section id="demo">
+                <h2>Live Demo</h2>
+                <!-- Demo iframe placeholder -->
+                <div style="background: var(--color-light-bg); border-radius: 8px; padding: 20px; text-align: center;">
+                    <p>Live terminal demo coming soon...</p>
+                    <img src="images/demo.gif" alt="Demo GIF placeholder" style="max-width: 100%; border-radius: 4px;">
+                </div>
+            </section>
+
+            <section id="benchmarks">
+                <h2>Performance Benchmarks</h2>
+                <ul class="feature-list">
+                    <li class="feature-card"><strong>⚡ 5.46x Faster Probing</strong> Uses native PyAV bindings instead
+                        of slow ffprobe subprocesses.</li>
+                    <li class="feature-card"><strong>🛡️ Auto-Heuristic Recovery</strong> Seamlessly falls back to CPU
+                        encoding or single-thread mode if GPU/Memory limits are hit.</li>
+                    <li class="feature-card"><strong>🎯 VMAF Quality Target</strong> Smart Auto-CRF consistently
+                        maintains >96 VMAF perceptual quality on all motion types.</li>
+                </ul>
+                <p style="margin-top: 15px;"><a href="reference/reference/benchmarks/index.html"
+                        class="button secondary">View
+                        Full Benchmark Data</a></p>
             </section>
 
             <section id="usage">
@@ -105,7 +144,7 @@ ffram -f "C:\path\to\video.mp4"
                             href="https://github.com/Rebuild-It-Labs/FFram" target="_blank"
                             rel="noopener noreferrer">GitHub page</a>.</li>
                     <li><strong>Clone locally:</strong>
-                        <code>git clone https://github.com/your-username/FFram.git</code>
+                        <code>git clone https://github.com/Rebuild-It-Labs/FFram.git</code>
                     </li>
                     <li><strong>Install dev dependencies:</strong> Set up your environment (we recommend using a virtual
                         environment).</li>
@@ -151,8 +190,25 @@ ffram -f "C:\path\to\video.mp4"
             <p>&copy; 2026 Rebuild-It-Labs &middot; <a href="https://github.com/Rebuild-It-Labs/FFram" target="_blank"
                     rel="noopener noreferrer">GitHub Repository</a></p>
             <p>Designed for speed, simplicity, and search engine optimization.</p>
+            <!-- <div class="contributor-cards">
+                <img src="images/contributor1.png" alt="Contributor 1 placeholder">
+                <img src="images/contributor2.png" alt="Contributor 2 placeholder">
+            </div> -->
         </div>
     </footer>
+
+    <script>
+        const btn = document.getElementById('theme-toggle');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        const current = localStorage.getItem('theme') || (prefersDark.matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = current;
+
+        btn.addEventListener('click', () => {
+            const newTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.dataset.theme = newTheme;
+            localStorage.setItem('theme', newTheme);
+        });
+    </script>
 </body>
 
 </html>

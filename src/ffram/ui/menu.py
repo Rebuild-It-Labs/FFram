@@ -2,6 +2,9 @@
 
 from pathlib import Path
 from typing import Optional
+import json
+import time
+import datetime
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
 from rich.table import Table
@@ -30,7 +33,62 @@ from ffram.categories.combos import ComboOps
 from ffram.core.validator import validate_input_file
 from ffram.core.probe import probe
 from ffram.ui.dialogs import pick_file, pick_files, pick_directory, MEDIA_FILTERS, VIDEO_FILTERS, AUDIO_FILTERS, IMAGE_FILTERS, SUBTITLE_FILTERS
-from ffram.ui.console import console, print_success, print_error, print_warning, print_section
+from ffram.ui.console import console, print_success, print_error, print_warning, print_section, print_parameter_summary, print_io_comparison, print_quick_stats
+
+RECENT_FILES_CACHE = Path.home() / ".ffram_recent.json"
+
+def load_recent_files():
+    if not RECENT_FILES_CACHE.exists():
+        return []
+    try:
+        with open(RECENT_FILES_CACHE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+def save_recent_file(path_str: str, op_name: str):
+    recent = load_recent_files()
+    entry = {"path": path_str, "op": op_name, "date": datetime.datetime.now().isoformat()}
+    recent = [r for r in recent if r["path"] != path_str]
+    recent.insert(0, entry)
+    recent = recent[:10]  # Keep last 10
+    try:
+        with open(RECENT_FILES_CACHE, "w", encoding="utf-8") as f:
+            json.dump(recent, f, indent=4)
+    except Exception:
+        pass
+
+def generate_report(input_info, output_info, params, op_name, elapsed_time):
+    report_path = output_info.file_path.with_suffix(".report.md")
+    lines = [
+        f"# FFram Operation Report: {op_name}",
+        f"**Date:** {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        f"**Time Elapsed:** {elapsed_time:.2f} seconds",
+        "",
+        "## Parameters",
+    ]
+    for k, v in params.items():
+        if k not in ["input_path", "second_input_path", "duration", "file_list", "workers"]:
+            lines.append(f"- **{k}**: {v}")
+    
+    lines.extend([
+        "",
+        "## Input vs Output Comparison",
+        "| Property | Original Input | Generated Output |",
+        "|---|---|---|",
+        f"| Name | {input_info.file_path.name} | {output_info.file_path.name} |",
+        f"| Size | {input_info.size_formatted} | {output_info.size_formatted} |",
+        f"| Duration | {input_info.duration_formatted} | {output_info.duration_formatted} |",
+        f"| Resolution | {input_info.resolution_label} | {output_info.resolution_label} |",
+        f"| Video Codec | {input_info.video_codec if input_info.has_video else 'N/A'} | {output_info.video_codec if output_info.has_video else 'N/A'} |",
+        f"| Audio Codec | {input_info.audio_codec if input_info.has_audio else 'N/A'} | {output_info.audio_codec if output_info.has_audio else 'N/A'} |",
+    ])
+    try:
+        with open(report_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
+        console.print(f"  [dim]-> Report saved: {report_path}[/dim]")
+    except Exception as e:
+        print_warning(f"Could not save report: {e}")
 
 OPERATION_MODULES = [
     AudioExtractOps(), AudioManageOps(), ConvertOps(), CompressOps(),
@@ -138,6 +196,10 @@ def prompt_operation_params(op_info, params):
             params["start_time"] = inquirer.text(message="Start timestamp:", default="00:01:00").execute()
             params["cut_duration"] = inquirer.text(message="Duration (seconds):", default="30").execute()
 
+    elif op_info.id == 201:
+        workers_str = inquirer.text(message="Worker URLs (comma separated):", default="http://localhost:8000").execute()
+        params["workers"] = [w.strip() for w in workers_str.split(",") if w.strip()]
+
     elif op_info.id == 68:
         params["timestamp"] = inquirer.text(message="Screenshot timestamp (HH:MM:SS):", default="00:00:10").execute()
 
@@ -207,10 +269,24 @@ def show_main_menu():
         count = sum(1 for op, _ in all_ops if op.category == name)
         choices.append({"name": f"{label}  ({count} ops)", "value": name})
     choices.append(Separator("-" * 40))
+    choices.append({"name": "[R]  Recent Files", "value": "__RECENT__"})
     choices.append({"name": "[S]  Search all operations", "value": "__SEARCH__"})
     choices.append({"name": "[G]  Show GPU / Hardware info", "value": "__GPU_INFO__"})
     choices.append({"name": "[X]  Exit", "value": "__EXIT__"})
     return inquirer.select(message="Select a category:", choices=choices, default=None, pointer=">").execute()
+
+def show_recent_files():
+    recent = load_recent_files()
+    if not recent:
+        print_warning("No recent files found.")
+        return None
+    choices = []
+    for r in recent:
+        date_str = r.get("date", "")[:10]
+        choices.append({"name": f"{date_str} | {Path(r['path']).name} ({r['op']})", "value": r['path']})
+    choices.append(Separator("-" * 40))
+    choices.append({"name": "<- Back", "value": "__BACK__"})
+    return inquirer.select(message="Select a recent file:", choices=choices, pointer=">").execute()
 
 
 def show_category_operations(category):
@@ -325,17 +401,43 @@ def execute_operation(operation_id, initial_file=None):
     params = prompt_operation_params(target_op, params)
 
     console.print()
+    print_parameter_summary(target_op.name, params)
+    
     if not inquirer.confirm(message="Execute this operation?", default=True).execute():
         print_warning("Operation cancelled by user.")
         return
 
     console.print()
+    start_time = time.time()
     result = target_module.execute(target_op.id, params)
+    elapsed_time = time.time() - start_time
 
     if result.success:
         print_success(result.message)
         if result.output_path:
             console.print(f"  [dim]-> Output: {result.output_path}[/dim]\n")
+            
+            # Print quick stats
+            from ffram.core.hardware import get_gpu_info
+            hw_info = get_gpu_info()
+            gpu_accel = bool(hw_info["nvidia_nvenc"] or hw_info["intel_qsv"] or hw_info["amd_amf"])
+            print_quick_stats(elapsed_time, gpu_accel)
+
+            # Print IO Comparison and save report
+            if target_op.category != "Batch Processing" and "input_path" in params:
+                try:
+                    in_info = probe(params["input_path"])
+                    out_info = probe(result.output_path)
+                    print_io_comparison(in_info, out_info)
+                    
+                    if inquirer.confirm(message="Save detailed markdown report?", default=False).execute():
+                        generate_report(in_info, out_info, params, target_op.name, elapsed_time)
+                        
+                except Exception as e:
+                    console.print(f"  [dim]Could not generate comparison: {e}[/dim]")
+            
+            if "input_path" in params and target_op.category != "Batch Processing":
+                save_recent_file(params["input_path"], target_op.name)
     else:
         print_error(result.message)
 

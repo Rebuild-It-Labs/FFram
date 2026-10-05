@@ -1,0 +1,19 @@
+name: Generate Sitemap
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'website_docs/**'
+      - 'docs/**'
+
+jobs:
+  sitemap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build docs and sitemap
+        run: |
+          echo "Building docs and sitemap..."
+          # Placeholder for actual mkdocs build and sitemap generation

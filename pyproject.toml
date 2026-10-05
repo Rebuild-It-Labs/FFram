@@ -5,12 +5,12 @@ build-backend = "hatchling.build"
 [project]
 name = "ffram"
 version = "1.0.1"
-description = "ffram - 102 High-Performance Media Operations across 18 Categories"
+description = "ffram - High Performance Media Operations across Specialized Media Categories"
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
 authors = [
-  { name="ffram authors", email="author@example.com" },
+  { name="ffram authors", email="redabothularamgopalreddy@gmail.com" },
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -21,7 +21,8 @@ classifiers = [
 dependencies = [
     "rich>=13.0.0",
     "InquirerPy>=0.3.4",
-    "pyfiglet>=1.0.2"
+    "pyfiglet>=1.0.2",
+    "av>=10.0.0"
 ]
 
 [project.urls]

@@ -63,6 +63,7 @@ def run_ffmpeg(
     duration: float = 0.0,
     on_progress: Optional[Callable[[ProgressInfo], None]] = None,
     ffmpeg_path: str = "ffmpeg",
+    _retries: int = 0,
 ) -> RunResult:
     """
     Execute an FFmpeg command with real-time progress tracking.
@@ -72,6 +73,7 @@ def run_ffmpeg(
         duration: Total expected duration in seconds (for percentage calculation).
         on_progress: Callback function invoked with ProgressInfo updates.
         ffmpeg_path: Path to ffmpeg executable.
+        _retries: Internal parameter to track auto-recovery retries.
 
     Returns:
         RunResult with success status, timing, and error details.
@@ -188,6 +190,43 @@ def run_ffmpeg(
         )
     else:
         stderr_text = stderr_data.decode("utf-8", errors="replace")
+
+        # --- Auto-Heuristic Failure Recovery ---
+        if _retries < 3:
+            new_cmd = None
+            
+            # Check for OOM
+            if "Cannot allocate memory" in stderr_text or "Out of memory" in stderr_text:
+                new_cmd = cmd.copy()
+                if "-threads" not in new_cmd:
+                    # Insert thread limit before the output file (last arg) or just at start
+                    new_cmd = ["-threads", "1", "-max_muxing_queue_size", "9999"] + new_cmd
+
+            # Check for GPU Encoder Failure
+            gpu_errors = ["No NVENC capable devices found", "OpenEncodeSessionEx failed", "Error initializing output stream", "nvenc failed"]
+            if any(e in stderr_text for e in gpu_errors) and new_cmd is None:
+                new_cmd = []
+                for c in cmd:
+                    if c in ["h264_nvenc", "h264_qsv", "h264_amf"]:
+                        new_cmd.append("libx264")
+                    elif c in ["hevc_nvenc", "hevc_qsv", "hevc_amf"]:
+                        new_cmd.append("libx265")
+                    else:
+                        new_cmd.append(c)
+                if new_cmd == cmd:
+                    new_cmd = None  # No encoder was replaced
+
+            # Retry if a heuristic matched
+            if new_cmd is not None:
+                return run_ffmpeg(
+                    cmd=new_cmd,
+                    duration=duration,
+                    on_progress=on_progress,
+                    ffmpeg_path=ffmpeg_path,
+                    _retries=_retries + 1
+                )
+        # ---------------------------------------
+
         # Extract the most meaningful error line
         error_lines = [
             line for line in stderr_text.splitlines()
