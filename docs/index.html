@@ -1,214 +1,398 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FFram - Fast FFmpeg Renderer</title>
-    <meta name="description"
-        content="FFram is a fast, highly interactive Terminal User Interface (TUI) for executing complex media operations.">
-    <meta name="keywords"
-        content="FFmpeg, Python, video processing, audio processing, multimedia, FFram, Rebuild It Labs">
-    <meta name="author" content="Rebuild It Labs">
-    <meta name="robots" content="index,follow">
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="google-site-verification" content="4t6ls2rwW57aO23YnuHKL_u-BzxoHCD-yAvJbbFSz6E" />
-</head>
+    <meta
+      name="description"
+      content="FFram is a fast, highly interactive Terminal User Interface (TUI) for executing complex media operations."
+    />
+    <meta
+      name="keywords"
+      content="FFmpeg, Python, video processing, audio processing, multimedia, FFram, Rebuild It Labs"
+    />
+    <meta name="author" content="Rebuild It Labs" />
+    <meta name="robots" content="index,follow" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta
+      name="google-site-verification"
+      content="4t6ls2rwW57aO23YnuHKL_u-BzxoHCD-yAvJbbFSz6E"
+    />
+  </head>
 
-<body>
+  <body>
     <header>
-        <div class="container header-content">
-            <div>
-                <h1><a href="/">FFram</a></h1>
-                <div style="margin-top: 5px;">
-                    <img src="https://img.shields.io/badge/Open%20Source-%E2%99%A5-green" alt="Open Source">
-                    <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="Python 3.8+">
-                </div>
-            </div>
-            <nav role="navigation">
-                <ul>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#usage">Usage</a></li>
-                    <li><a href="#documentation">Documentation</a></li>
-                    <li><a href="#contribute">Contribute</a></li>
-                </ul>
-            </nav>
-            <button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+      <div class="container header-content">
+        <div>
+          <h1><a href="/">FFram</a></h1>
+          <div style="margin-top: 0.5rem">
+            <img
+              src="https://img.shields.io/badge/Open%20Source-Yes-green"
+              alt="Open Source"
+            />
+            <img
+              src="https://img.shields.io/badge/python-3.8+-blue.svg"
+              alt="Python 3.8+"
+            />
+          </div>
         </div>
+        <nav role="navigation">
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#usage">Usage</a></li>
+            <li><a href="#documentation">Documentation</a></li>
+            <li><a href="#contribute">Contribute</a></li>
+          </ul>
+        </nav>
+      </div>
     </header>
 
     <div class="container main-layout">
-        <main>
-            <section id="hero" style="text-align: center; margin-bottom: 40px;">
-                <img src="images/hero.gif" alt="Hero GIF placeholder"
-                    style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-            </section>
+      <main>
+        <section id="hero" style="text-align: center; margin-bottom: 2.5rem">
+          <img
+            src="images/hero.png"
+            alt="Hero Image placeholder"
+            style="
+              max-width: 100%;
+              height: auto;
+              border-radius: 0.5rem;
+              box-shadow: 0 0.25rem 0.6rem rgba(0, 0, 0, 0.1);
+            "
+          />
+        </section>
 
-            <section id="about" class="intro-section">
-                <h2>Fast FFmpeg Renderer for Audio and Moving-pictures</h2>
-                <p>FFram is a fast, highly interactive Terminal User Interface (TUI) for executing complex media
-                    operations on Windows, macOS, and Linux. It abstracts complex FFmpeg command-line syntax into an
-                    intuitive menu system with native file picker dialogs, real-time progress bars, and ETA
-                    calculations.</p>
-                <div class="button-group">
-                    <a href="#usage" class="button primary">Get Started</a>
-                    <a href="https://github.com/Rebuild-It-Labs/FFram" class="button secondary" target="_blank"
-                        rel="noopener noreferrer">View on GitHub</a>
-                </div>
-            </section>
+        <section id="about" class="intro-section">
+          <h2>Fast FFmpeg Renderer for Audio and Moving-pictures</h2>
+          <p>
+            FFram is a fast, highly interactive Terminal User Interface (TUI)
+            for executing complex media operations on Windows, macOS, and Linux.
+            It abstracts complex FFmpeg command-line syntax into an intuitive
+            menu system with native file picker dialogs, real-time progress
+            bars, and ETA calculations.
+          </p>
+          <div class="button-group">
+            <a href="#usage" class="button primary">Get Started</a>
+            <a
+              href="https://github.com/Rebuild-It-Labs/FFram"
+              class="button secondary"
+              target="_blank"
+              rel="noopener noreferrer"
+              >View on GitHub</a
+            >
+          </div>
+        </section>
 
-            <section id="news">
-                <h2>Latest News</h2>
-                <article class="news-item">
-                    <h3><span class="date">October 4, 2026</span> FFram initial website launch</h3>
-                    <p>We are proud to announce the new website for FFram. This clean, static layout is designed for
-                        high visibility, speed, and maximum search engine ranking, inspired by the classic FFmpeg
-                        aesthetic.</p>
-                </article>
-            </section>
+        <section id="news">
+          <h2>Latest News</h2>
+          <article class="news-item">
+            <h3>
+              <span class="date">October 4, 2026</span> FFram initial website
+              launch
+            </h3>
+            <p>
+              We are proud to announce the new website for FFram. This clean,
+              static layout is designed for high visibility, speed, and maximum
+              search engine ranking, inspired by the classic FFmpeg aesthetic.
+            </p>
+          </article>
+        </section>
 
-            <section id="features">
-                <h2>Why FFram?</h2>
-                <ul class="feature-list">
-                    <li class="feature-card"><strong> High-Performance Operations</strong> Across specialized media
-                        categories.</li>
-                    <li class="feature-card"><strong> Interactive TUI</strong> Built with InquirerPy and rich, featuring
-                        fuzzy search to instantly find operations.</li>
-                    <li class="feature-card"><strong> Native File Pickers</strong> Press Enter to browse visually for
-                        input and output files.</li>
-                    <li class="feature-card"><strong> Hardware Acceleration</strong> Auto-detection for NVIDIA NVENC,
-                        Intel QSV, and AMD AMF.</li>
-                </ul>
-            </section>
+        <section id="features">
+          <h2>Why FFram?</h2>
+          <ul class="feature-list">
+            <li class="feature-card">
+              <span class="badge">Core</span
+              ><strong> High-Performance Operations</strong> Across specialized
+              media categories.
+            </li>
+            <li class="feature-card">
+              <span class="badge">UI</span
+              ><strong> Interactive TUI</strong> Built with InquirerPy and rich,
+              featuring fuzzy search to instantly find operations.
+            </li>
+            <li class="feature-card">
+              <span class="badge">UX</span
+              ><strong> Native File Pickers</strong> Press Enter to browse
+              visually for input and output files.
+            </li>
+            <li class="feature-card">
+              <span class="badge">Hardware</span
+              ><strong> Hardware Acceleration</strong> Auto-detection for NVIDIA
+              NVENC, Intel QSV, and AMD AMF.
+            </li>
+          </ul>
+        </section>
 
-            <section id="demo">
-                <h2>Live Demo</h2>
-                <!-- Demo iframe placeholder -->
-                <div style="background: var(--color-light-bg); border-radius: 8px; padding: 20px; text-align: center;">
-                    <p>Live terminal demo coming soon...</p>
-                    <img src="images/demo.gif" alt="Demo GIF placeholder" style="max-width: 100%; border-radius: 4px;">
-                </div>
-            </section>
+        <section id="demo">
+          <h2>Live Demo</h2>
+          <!-- Demo iframe placeholder -->
+          <div
+            style="
+              background: var(--color-light-bg);
+              border-radius: 0.5rem;
+              padding: 1.5rem;
+              text-align: center;
+            "
+          >
+            <p>Live terminal demo coming soon...</p>
+            <img
+              src="images/demo.gif"
+              alt="Demo GIF placeholder"
+              style="max-width: 100%; height: auto; border-radius: 0.25rem"
+            />
+          </div>
+        </section>
 
-            <section id="benchmarks">
-                <h2>Performance Benchmarks</h2>
-                <ul class="feature-list">
-                    <li class="feature-card"><strong>⚡ 5.46x Faster Probing</strong> Uses native PyAV bindings instead
-                        of slow ffprobe subprocesses.</li>
-                    <li class="feature-card"><strong>🛡️ Auto-Heuristic Recovery</strong> Seamlessly falls back to CPU
-                        encoding or single-thread mode if GPU/Memory limits are hit.</li>
-                    <li class="feature-card"><strong>🎯 VMAF Quality Target</strong> Smart Auto-CRF consistently
-                        maintains >96 VMAF perceptual quality on all motion types.</li>
-                </ul>
-                <p style="margin-top: 15px;"><a href="reference/reference/benchmarks/index.html"
-                        class="button secondary">View
-                        Full Benchmark Data</a></p>
-            </section>
+        <section id="benchmarks">
+          <h2>Performance Benchmarks</h2>
+          <ul class="feature-list">
+            <li class="feature-card">
+              <span class="badge">Speed</span
+              ><strong> 5.46x Faster Probing</strong> Uses native PyAV bindings
+              instead of slow ffprobe subprocesses.
+            </li>
+            <li class="feature-card">
+              <span class="badge">Reliability</span
+              ><strong> Auto-Heuristic Recovery</strong> Seamlessly falls back
+              to CPU encoding or single-thread mode if GPU/Memory limits are
+              hit.
+            </li>
+            <li class="feature-card">
+              <span class="badge">Quality</span
+              ><strong> VMAF Quality Target</strong> Smart Auto-CRF consistently
+              maintains >96 VMAF perceptual quality on all motion types.
+            </li>
+          </ul>
+          <p style="margin-top: 1rem">
+            <a
+              href="reference/reference/benchmarks/index.html"
+              class="button secondary"
+              >View Full Benchmark Data</a
+            >
+          </p>
+        </section>
 
-            <section id="usage">
-                <h2>Usage Examples</h2>
-                <p>Using FFram is incredibly simple. You can launch the interactive UI from any terminal:</p>
-                <div class="code-block-wrapper">
-                    <pre><code># Launch the main menu
+        <section id="usage">
+          <h2>Usage Examples</h2>
+          <p>
+            Using FFram is incredibly simple. You can launch the interactive UI
+            from any terminal:
+          </p>
+          <div class="code-block-wrapper">
+            <pre><code># Launch the main menu
 ffram
 
 # Or pass a file directly to skip the initial file picker
 ffram -f "C:\path\to\video.mp4"
 </code></pre>
-                </div>
-                <p>Once launched, use the fuzzy search or browse categories to select the operation you want to perform.
-                </p>
-            </section>
+          </div>
+          <p>
+            Once launched, use the fuzzy search or browse categories to select
+            the operation you want to perform.
+          </p>
+        </section>
 
-            <section id="documentation">
-                <h2>Detailed Documentation</h2>
-                <p>Our documentation covers everything from basic installation to advanced multimedia pipelines:</p>
-                <ul class="clean-list">
-                    <li><a href="https://github.com/Rebuild-It-Labs/FFram#installation" target="_blank"
-                            rel="noopener noreferrer">Installation Guide</a></li>
-                    <li><a href="https://github.com/Rebuild-It-Labs/FFram#quick-start" target="_blank"
-                            rel="noopener noreferrer">Quick Start Tutorial</a></li>
-                    <li><a href="https://github.com/Rebuild-It-Labs/FFram#api-reference" target="_blank"
-                            rel="noopener noreferrer">API Reference</a></li>
-                    <li><a href="https://github.com/Rebuild-It-Labs/FFram/tree/main/examples" target="_blank"
-                            rel="noopener noreferrer">Advanced Examples</a></li>
-                </ul>
-            </section>
+        <section id="documentation">
+          <h2>Detailed Documentation</h2>
+          <p>
+            Our documentation covers everything from basic installation to
+            advanced multimedia pipelines:
+          </p>
+          <ul class="clean-list">
+            <li>
+              <a
+                href="https://github.com/Rebuild-It-Labs/FFram#installation"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Installation Guide</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://github.com/Rebuild-It-Labs/FFram#quick-start"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Quick Start Tutorial</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://github.com/Rebuild-It-Labs/FFram#api-reference"
+                target="_blank"
+                rel="noopener noreferrer"
+                >API Reference</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://github.com/Rebuild-It-Labs/FFram/tree/main/examples"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Advanced Examples</a
+              >
+            </li>
+          </ul>
+        </section>
 
-            <section id="contribute">
-                <h2>How to Contribute</h2>
-                <p>We welcome contributions from the community! Here is how you can get involved:</p>
-                <ol class="steps-list">
-                    <li><strong>Fork the repository:</strong> Click the "Fork" button on our <a
-                            href="https://github.com/Rebuild-It-Labs/FFram" target="_blank"
-                            rel="noopener noreferrer">GitHub page</a>.</li>
-                    <li><strong>Clone locally:</strong>
-                        <code>git clone https://github.com/Rebuild-It-Labs/FFram.git</code>
-                    </li>
-                    <li><strong>Install dev dependencies:</strong> Set up your environment (we recommend using a virtual
-                        environment).</li>
-                    <li><strong>Create a branch:</strong> Make your changes on a descriptive branch name.</li>
-                    <li><strong>Submit a Pull Request:</strong> Open a PR with a clear description of your improvements
-                        or fixes.</li>
-                </ol>
-                <p>Before contributing, please review our <a
-                        href="https://github.com/Rebuild-It-Labs/FFram/blob/main/CONTRIBUTING.md" target="_blank"
-                        rel="noopener noreferrer">CONTRIBUTING.md</a> file for code standards and guidelines.</p>
-            </section>
-        </main>
+        <section id="contribute">
+          <h2>How to Contribute</h2>
+          <p>
+            We welcome contributions from the community! Here is how you can get
+            involved:
+          </p>
+          <ol class="steps-list">
+            <li>
+              <strong>Fork the repository:</strong> Click the "Fork" button on
+              our
+              <a
+                href="https://github.com/Rebuild-It-Labs/FFram"
+                target="_blank"
+                rel="noopener noreferrer"
+                >GitHub page</a
+              >.
+            </li>
+            <li>
+              <strong>Clone locally:</strong>
+              <code
+                >git clone https://github.com/Rebuild-It-Labs/FFram.git</code
+              >
+            </li>
+            <li>
+              <strong>Install dev dependencies:</strong> Set up your environment
+              (we recommend using a virtual environment).
+            </li>
+            <li>
+              <strong>Create a branch:</strong> Make your changes on a
+              descriptive branch name.
+            </li>
+            <li>
+              <strong>Submit a Pull Request:</strong> Open a PR with a clear
+              description of your improvements or fixes.
+            </li>
+          </ol>
+          <p>
+            Before contributing, please review our
+            <a
+              href="https://github.com/Rebuild-It-Labs/FFram/blob/main/CONTRIBUTING.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              >CONTRIBUTING.md</a
+            >
+            file for code standards and guidelines.
+          </p>
+        </section>
+      </main>
 
-        <aside class="sidebar">
-            <div class="widget">
-                <h3>Get FFram</h3>
-                <p>Latest release: <strong>v1.0.0</strong></p>
-                <p>Install via pip:</p>
-                <pre><code>pip install ffram</code></pre>
-            </div>
+      <aside class="sidebar">
+        <div class="widget">
+          <h3>Get FFram</h3>
+          <p>Latest release: <strong id="ffram-version">v1.0.0</strong></p>
+          <p>Install via pip:</p>
+          <div class="install-widget">
+            <pre><code id="ffram-install-cmd">pip install ffram</code></pre>
+            <button
+              id="copy-btn"
+              class="button primary"
+              style="
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+                margin-top: 0.5rem;
+                cursor: pointer;
+              "
+              onclick="copyInstallCmd()"
+            >
+              Copy
+            </button>
+          </div>
+        </div>
 
-            <div class="widget">
-                <h3>Resources</h3>
-                <ul class="clean-list">
-                    <li><a href="https://github.com/Rebuild-It-Labs/FFram" target="_blank"
-                            rel="noopener noreferrer">Source Code</a></li>
-                    <li><a href="https://github.com/Rebuild-It-Labs/FFram/issues" target="_blank"
-                            rel="noopener noreferrer">Bug Tracker</a></li>
-                    <li><a href="https://github.com/Rebuild-It-Labs/FFram/pulls" target="_blank"
-                            rel="noopener noreferrer">Pull Requests</a></li>
-                </ul>
-            </div>
+        <div class="widget">
+          <h3>Resources</h3>
+          <ul class="clean-list">
+            <li>
+              <a
+                href="https://github.com/Rebuild-It-Labs/FFram"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Source Code</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://github.com/Rebuild-It-Labs/FFram/issues"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Bug Tracker</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://github.com/Rebuild-It-Labs/FFram/pulls"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Pull Requests</a
+              >
+            </li>
+          </ul>
+        </div>
 
-            <div class="widget">
-                <h3>Sponsors</h3>
-                <p>FFram is supported by <strong>Rebuild-It-Labs</strong>.</p>
-            </div>
-        </aside>
+        <div class="widget">
+          <h3>Sponsors</h3>
+          <p>FFram is supported by <strong>Rebuild-It-Labs</strong>.</p>
+        </div>
+      </aside>
     </div>
 
     <footer>
-        <div class="container">
-            <p>&copy; 2026 Rebuild-It-Labs &middot; <a href="https://github.com/Rebuild-It-Labs/FFram" target="_blank"
-                    rel="noopener noreferrer">GitHub Repository</a></p>
-            <p>Designed for speed, simplicity, and search engine optimization.</p>
-            <!-- <div class="contributor-cards">
+      <div class="container">
+        <p>
+          &copy; 2026 Rebuild-It-Labs &middot;
+          <a
+            href="https://github.com/Rebuild-It-Labs/FFram"
+            target="_blank"
+            rel="noopener noreferrer"
+            >GitHub Repository</a
+          >
+        </p>
+        <p>Designed for speed, simplicity, and search engine optimization.</p>
+        <!-- <div class="contributor-cards">
                 <img src="images/contributor1.png" alt="Contributor 1 placeholder">
                 <img src="images/contributor2.png" alt="Contributor 2 placeholder">
             </div> -->
-        </div>
+      </div>
     </footer>
 
     <script>
-        const btn = document.getElementById('theme-toggle');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-        const current = localStorage.getItem('theme') || (prefersDark.matches ? 'dark' : 'light');
-        document.documentElement.dataset.theme = current;
+      async function fetchLatestVersion() {
+        try {
+          const response = await fetch("https://pypi.org/pypi/ffram/json");
+          if (response.ok) {
+            const data = await response.json();
+            const version = data.info.version;
+            document.getElementById("ffram-version").innerText = "v" + version;
+            document.getElementById("ffram-install-cmd").innerText =
+              "pip install ffram==" + version;
+          }
+        } catch (error) {
+          console.error("Failed to fetch FFram version:", error);
+        }
+      }
 
-        btn.addEventListener('click', () => {
-            const newTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-            document.documentElement.dataset.theme = newTheme;
-            localStorage.setItem('theme', newTheme);
+      function copyInstallCmd() {
+        const cmdText = document.getElementById("ffram-install-cmd").innerText;
+        navigator.clipboard.writeText(cmdText).then(() => {
+          const btn = document.getElementById("copy-btn");
+          btn.innerText = "Copied!";
+          setTimeout(() => {
+            btn.innerText = "Copy";
+          }, 2000);
         });
-    </script>
-</body>
+      }
 
+      document.addEventListener("DOMContentLoaded", fetchLatestVersion);
+    </script>
+  </body>
 </html>

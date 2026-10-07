@@ -4,19 +4,25 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <link rel="icon" href="/FFram/reference/assets/images/favicon.png" />
-    <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7" />
-
-    <title>FFram Documentation</title>
-
     <link
-      rel="stylesheet"
-      href="/FFram/reference/assets/stylesheets/main.ec1eaa64.min.css"
+      rel="canonical"
+      href="https://rebuild-it-labs.github.io/FFram/reference/benchmarks/"
     />
 
+    <link rel="prev" href="../research_guide/" />
+
+    <link rel="next" href="../reference/installation/" />
+
+    <link rel="icon" href="../assets/images/favicon.png" />
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7" />
+
+    <title>Benchmarks - FFram Documentation</title>
+
+    <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css" />
+
     <link
       rel="stylesheet"
-      href="/FFram/reference/assets/stylesheets/palette.ab4e12ef.min.css"
+      href="../assets/stylesheets/palette.ab4e12ef.min.css"
     />
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -32,7 +38,7 @@
     </style>
 
     <script>
-      ((__md_scope = new URL("/FFram/reference/", location)),
+      ((__md_scope = new URL("..", location)),
         (__md_hash = (e) =>
           [...e].reduce((e, _) => (e << 5) - e + _.charCodeAt(0), 0)),
         (__md_get = (e, _ = localStorage, t = __md_scope) =>
@@ -66,13 +72,15 @@
       autocomplete="off"
     />
     <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip"></div>
+    <div data-md-component="skip">
+      <a href="#benchmarks" class="md-skip"> Skip to content </a>
+    </div>
     <div data-md-component="announce"></div>
 
     <header class="md-header md-header--shadow" data-md-component="header">
       <nav class="md-header__inner md-grid" aria-label="Header">
         <a
-          href="/FFram/reference/."
+          href=".."
           title="FFram Documentation"
           class="md-header__button md-logo"
           aria-label="FFram Documentation"
@@ -95,7 +103,7 @@
               <span class="md-ellipsis"> FFram Documentation </span>
             </div>
             <div class="md-header__topic" data-md-component="header-topic">
-              <span class="md-ellipsis"> </span>
+              <span class="md-ellipsis"> Benchmarks </span>
             </div>
           </div>
         </div>
@@ -263,7 +271,7 @@
                 >
                   <label class="md-nav__title" for="__drawer">
                     <a
-                      href="/FFram/reference/."
+                      href=".."
                       title="FFram Documentation"
                       class="md-nav__button md-logo"
                       aria-label="FFram Documentation"
@@ -283,41 +291,103 @@
 
                   <ul class="md-nav__list" data-md-scrollfix>
                     <li class="md-nav__item">
-                      <a href="/FFram/reference/." class="md-nav__link">
+                      <a href=".." class="md-nav__link">
                         <span class="md-ellipsis"> Home </span>
                       </a>
                     </li>
 
                     <li class="md-nav__item">
-                      <a
-                        href="/FFram/reference/research_guide/"
-                        class="md-nav__link"
-                      >
+                      <a href="../research_guide/" class="md-nav__link">
                         <span class="md-ellipsis"> Research Guide </span>
                       </a>
                     </li>
 
-                    <li class="md-nav__item">
-                      <a
-                        href="/FFram/reference/benchmarks/"
-                        class="md-nav__link"
+                    <li class="md-nav__item md-nav__item--active">
+                      <input
+                        class="md-nav__toggle md-toggle"
+                        type="checkbox"
+                        id="__toc"
+                      />
+
+                      <label
+                        class="md-nav__link md-nav__link--active"
+                        for="__toc"
                       >
                         <span class="md-ellipsis"> Benchmarks </span>
+
+                        <span class="md-nav__icon md-icon"></span>
+                      </label>
+
+                      <a href="./" class="md-nav__link md-nav__link--active">
+                        <span class="md-ellipsis"> Benchmarks </span>
                       </a>
+
+                      <nav
+                        class="md-nav md-nav--secondary"
+                        aria-label="Table of contents"
+                      >
+                        <label class="md-nav__title" for="__toc">
+                          <span class="md-nav__icon md-icon"></span>
+                          Table of contents
+                        </label>
+                        <ul
+                          class="md-nav__list"
+                          data-md-component="toc"
+                          data-md-scrollfix
+                        >
+                          <li class="md-nav__item">
+                            <a
+                              href="#metadata-latency-rq1"
+                              class="md-nav__link"
+                            >
+                              <span class="md-ellipsis">
+                                Metadata Latency (RQ1)
+                              </span>
+                            </a>
+                          </li>
+
+                          <li class="md-nav__item">
+                            <a
+                              href="#vmafdriven-autocrf-rq2"
+                              class="md-nav__link"
+                            >
+                              <span class="md-ellipsis">
+                                VMAF‑Driven Auto‑CRF (RQ2)
+                              </span>
+                            </a>
+                          </li>
+
+                          <li class="md-nav__item">
+                            <a href="#cluster-speedup-rq3" class="md-nav__link">
+                              <span class="md-ellipsis">
+                                Cluster Speedup (RQ3)
+                              </span>
+                            </a>
+                          </li>
+
+                          <li class="md-nav__item">
+                            <a
+                              href="#faulttolerant-recovery-rq4"
+                              class="md-nav__link"
+                            >
+                              <span class="md-ellipsis">
+                                Fault‑Tolerant Recovery (RQ4)
+                              </span>
+                            </a>
+                          </li>
+                        </ul>
+                      </nav>
                     </li>
 
                     <li class="md-nav__item">
-                      <a
-                        href="/FFram/reference/general_project.md"
-                        class="md-nav__link"
-                      >
+                      <a href="../general_project.md" class="md-nav__link">
                         <span class="md-ellipsis"> General Project </span>
                       </a>
                     </li>
 
                     <li class="md-nav__item">
                       <a
-                        href="/FFram/reference/improvement_suggestions.md"
+                        href="../improvement_suggestions.md"
                         class="md-nav__link"
                       >
                         <span class="md-ellipsis">
@@ -358,7 +428,7 @@
                         <ul class="md-nav__list" data-md-scrollfix>
                           <li class="md-nav__item">
                             <a
-                              href="/FFram/reference/reference/installation/"
+                              href="../reference/installation/"
                               class="md-nav__link"
                             >
                               <span class="md-ellipsis"> Installation </span>
@@ -367,7 +437,7 @@
 
                           <li class="md-nav__item">
                             <a
-                              href="/FFram/reference/reference/quick-start/"
+                              href="../reference/quick-start/"
                               class="md-nav__link"
                             >
                               <span class="md-ellipsis"> Quick Start </span>
@@ -376,7 +446,7 @@
 
                           <li class="md-nav__item">
                             <a
-                              href="/FFram/reference/reference/benchmarks/"
+                              href="../reference/benchmarks/"
                               class="md-nav__link"
                             >
                               <span class="md-ellipsis"> Benchmarks </span>
@@ -401,14 +471,230 @@
                 <nav
                   class="md-nav md-nav--secondary"
                   aria-label="Table of contents"
-                ></nav>
+                >
+                  <label class="md-nav__title" for="__toc">
+                    <span class="md-nav__icon md-icon"></span>
+                    Table of contents
+                  </label>
+                  <ul
+                    class="md-nav__list"
+                    data-md-component="toc"
+                    data-md-scrollfix
+                  >
+                    <li class="md-nav__item">
+                      <a href="#metadata-latency-rq1" class="md-nav__link">
+                        <span class="md-ellipsis">
+                          Metadata Latency (RQ1)
+                        </span>
+                      </a>
+                    </li>
+
+                    <li class="md-nav__item">
+                      <a href="#vmafdriven-autocrf-rq2" class="md-nav__link">
+                        <span class="md-ellipsis">
+                          VMAF‑Driven Auto‑CRF (RQ2)
+                        </span>
+                      </a>
+                    </li>
+
+                    <li class="md-nav__item">
+                      <a href="#cluster-speedup-rq3" class="md-nav__link">
+                        <span class="md-ellipsis"> Cluster Speedup (RQ3) </span>
+                      </a>
+                    </li>
+
+                    <li class="md-nav__item">
+                      <a
+                        href="#faulttolerant-recovery-rq4"
+                        class="md-nav__link"
+                      >
+                        <span class="md-ellipsis">
+                          Fault‑Tolerant Recovery (RQ4)
+                        </span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
               </div>
             </div>
           </div>
 
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
-              <h1>404 - Not found</h1>
+              <h1 id="benchmarks">
+                Benchmarks<a
+                  class="headerlink"
+                  href="#benchmarks"
+                  title="Permanent link"
+                  >&para;</a
+                >
+              </h1>
+              <p>
+                This page summarizes the key benchmark results for the
+                <strong>FFram</strong> project.
+              </p>
+              <h2 id="metadata-latency-rq1">
+                Metadata Latency (RQ1)<a
+                  class="headerlink"
+                  href="#metadata-latency-rq1"
+                  title="Permanent link"
+                  >&para;</a
+                >
+              </h2>
+              <ul>
+                <li><strong>PyAV</strong>: 4.53 ± 0.84 ms per probe.</li>
+                <li><strong>ffprobe</strong>: 29.51 ± 2.01 ms per probe.</li>
+                <li>
+                  <strong>Speedup</strong>: <strong>6.51×</strong> faster using
+                  PyAV.
+                </li>
+              </ul>
+              <h2 id="vmafdriven-autocrf-rq2">
+                VMAF‑Driven Auto‑CRF (RQ2)<a
+                  class="headerlink"
+                  href="#vmafdriven-autocrf-rq2"
+                  title="Permanent link"
+                  >&para;</a
+                >
+              </h2>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Clip</th>
+                    <th>Method</th>
+                    <th>CRF</th>
+                    <th>Size (KB)</th>
+                    <th>VMAF</th>
+                    <th>ΔSize</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>High‑motion</td>
+                    <td>Static CRF 23</td>
+                    <td>23</td>
+                    <td>5111.7</td>
+                    <td>87.69</td>
+                    <td>–</td>
+                  </tr>
+                  <tr>
+                    <td>High‑motion</td>
+                    <td>Auto‑CRF</td>
+                    <td>15</td>
+                    <td>9257.6</td>
+                    <td>96.58</td>
+                    <td><strong>+81.1 %</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Low‑motion</td>
+                    <td>Static CRF 23</td>
+                    <td>23</td>
+                    <td>37.6</td>
+                    <td>93.16</td>
+                    <td>–</td>
+                  </tr>
+                  <tr>
+                    <td>Low‑motion</td>
+                    <td>Auto‑CRF</td>
+                    <td>17</td>
+                    <td>51.7</td>
+                    <td>96.19</td>
+                    <td><strong>+37.4 %</strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      &gt; <strong>Interpretation</strong>: Auto‑CRF reliably
+                      meets the VMAF ≥ 95 target but incurs a size increase; it
+                      serves as a quality‑floor rather than a compression
+                      optimizer.
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h2 id="cluster-speedup-rq3">
+                Cluster Speedup (RQ3)<a
+                  class="headerlink"
+                  href="#cluster-speedup-rq3"
+                  title="Permanent link"
+                  >&para;</a
+                >
+              </h2>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nodes</th>
+                    <th>Time (s) ± SD</th>
+                    <th>Speedup</th>
+                    <th>Efficiency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>53.32 ± 0.19</td>
+                    <td>1.00×</td>
+                    <td>100 %</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>30.61 ± 3.70</td>
+                    <td><strong>1.74×</strong></td>
+                    <td><strong>87 %</strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      &gt; The measured speedup aligns with Amdahl’s law
+                      assuming a parallel fraction of ~85 %.
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h2 id="faulttolerant-recovery-rq4">
+                Fault‑Tolerant Recovery (RQ4)<a
+                  class="headerlink"
+                  href="#faulttolerant-recovery-rq4"
+                  title="Permanent link"
+                  >&para;</a
+                >
+              </h2>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Fault</th>
+                    <th>Detected stderr</th>
+                    <th>Mutation</th>
+                    <th>Outcome</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Out‑of‑memory</td>
+                    <td><code>Cannot allocate memory</code></td>
+                    <td>Add <code>-threads 1</code></td>
+                    <td><strong>Pass</strong></td>
+                  </tr>
+                  <tr>
+                    <td>GPU encoder failure</td>
+                    <td><code>No NVENC capable devices found</code></td>
+                    <td>Switch to CPU encoder (<code>libx264</code>)</td>
+                    <td><strong>Pass</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+              <blockquote>
+                <p>
+                  <strong>Note</strong>: The earlier 4K cluster benchmark that
+                  required a missing test video has been omitted.
+                </p>
+              </blockquote>
             </article>
           </div>
 
@@ -445,9 +731,9 @@
     <script id="__config" type="application/json">
       {
         "annotate": null,
-        "base": "/FFram/reference/",
+        "base": "..",
         "features": [],
-        "search": "/FFram/reference/assets/javascripts/workers/search.2c215733.min.js",
+        "search": "../assets/javascripts/workers/search.2c215733.min.js",
         "tags": null,
         "translations": {
           "clipboard.copied": "Copied to clipboard",
@@ -465,6 +751,6 @@
       }
     </script>
 
-    <script src="/FFram/reference/assets/javascripts/bundle.d7400e89.min.js"></script>
+    <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
   </body>
 </html>

@@ -4,19 +4,25 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <link rel="icon" href="/FFram/reference/assets/images/favicon.png" />
-    <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7" />
-
-    <title>FFram Documentation</title>
-
     <link
-      rel="stylesheet"
-      href="/FFram/reference/assets/stylesheets/main.ec1eaa64.min.css"
+      rel="canonical"
+      href="https://rebuild-it-labs.github.io/FFram/reference/research_guide/"
     />
 
+    <link rel="prev" href=".." />
+
+    <link rel="next" href="../benchmarks/" />
+
+    <link rel="icon" href="../assets/images/favicon.png" />
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7" />
+
+    <title>Research Guide - FFram Documentation</title>
+
+    <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css" />
+
     <link
       rel="stylesheet"
-      href="/FFram/reference/assets/stylesheets/palette.ab4e12ef.min.css"
+      href="../assets/stylesheets/palette.ab4e12ef.min.css"
     />
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -32,7 +38,7 @@
     </style>
 
     <script>
-      ((__md_scope = new URL("/FFram/reference/", location)),
+      ((__md_scope = new URL("..", location)),
         (__md_hash = (e) =>
           [...e].reduce((e, _) => (e << 5) - e + _.charCodeAt(0), 0)),
         (__md_get = (e, _ = localStorage, t = __md_scope) =>
@@ -66,13 +72,15 @@
       autocomplete="off"
     />
     <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip"></div>
+    <div data-md-component="skip">
+      <a href="#research-guide" class="md-skip"> Skip to content </a>
+    </div>
     <div data-md-component="announce"></div>
 
     <header class="md-header md-header--shadow" data-md-component="header">
       <nav class="md-header__inner md-grid" aria-label="Header">
         <a
-          href="/FFram/reference/."
+          href=".."
           title="FFram Documentation"
           class="md-header__button md-logo"
           aria-label="FFram Documentation"
@@ -95,7 +103,7 @@
               <span class="md-ellipsis"> FFram Documentation </span>
             </div>
             <div class="md-header__topic" data-md-component="header-topic">
-              <span class="md-ellipsis"> </span>
+              <span class="md-ellipsis"> Research Guide </span>
             </div>
           </div>
         </div>
@@ -263,7 +271,7 @@
                 >
                   <label class="md-nav__title" for="__drawer">
                     <a
-                      href="/FFram/reference/."
+                      href=".."
                       title="FFram Documentation"
                       class="md-nav__button md-logo"
                       aria-label="FFram Documentation"
@@ -283,41 +291,117 @@
 
                   <ul class="md-nav__list" data-md-scrollfix>
                     <li class="md-nav__item">
-                      <a href="/FFram/reference/." class="md-nav__link">
+                      <a href=".." class="md-nav__link">
                         <span class="md-ellipsis"> Home </span>
                       </a>
                     </li>
 
-                    <li class="md-nav__item">
-                      <a
-                        href="/FFram/reference/research_guide/"
-                        class="md-nav__link"
+                    <li class="md-nav__item md-nav__item--active">
+                      <input
+                        class="md-nav__toggle md-toggle"
+                        type="checkbox"
+                        id="__toc"
+                      />
+
+                      <label
+                        class="md-nav__link md-nav__link--active"
+                        for="__toc"
                       >
                         <span class="md-ellipsis"> Research Guide </span>
+
+                        <span class="md-nav__icon md-icon"></span>
+                      </label>
+
+                      <a href="./" class="md-nav__link md-nav__link--active">
+                        <span class="md-ellipsis"> Research Guide </span>
                       </a>
+
+                      <nav
+                        class="md-nav md-nav--secondary"
+                        aria-label="Table of contents"
+                      >
+                        <label class="md-nav__title" for="__toc">
+                          <span class="md-nav__icon md-icon"></span>
+                          Table of contents
+                        </label>
+                        <ul
+                          class="md-nav__list"
+                          data-md-component="toc"
+                          data-md-scrollfix
+                        >
+                          <li class="md-nav__item">
+                            <a
+                              href="#1-research-questions"
+                              class="md-nav__link"
+                            >
+                              <span class="md-ellipsis">
+                                1. Research Questions
+                              </span>
+                            </a>
+                          </li>
+
+                          <li class="md-nav__item">
+                            <a
+                              href="#2-experimental-setup"
+                              class="md-nav__link"
+                            >
+                              <span class="md-ellipsis">
+                                2. Experimental Setup
+                              </span>
+                            </a>
+                          </li>
+
+                          <li class="md-nav__item">
+                            <a
+                              href="#3-data-collection-analysis"
+                              class="md-nav__link"
+                            >
+                              <span class="md-ellipsis">
+                                3. Data Collection &amp; Analysis
+                              </span>
+                            </a>
+                          </li>
+
+                          <li class="md-nav__item">
+                            <a
+                              href="#4-reporting-conventions"
+                              class="md-nav__link"
+                            >
+                              <span class="md-ellipsis">
+                                4. Reporting Conventions
+                              </span>
+                            </a>
+                          </li>
+
+                          <li class="md-nav__item">
+                            <a
+                              href="#5-reproducibility-checklist"
+                              class="md-nav__link"
+                            >
+                              <span class="md-ellipsis">
+                                5. Reproducibility Checklist
+                              </span>
+                            </a>
+                          </li>
+                        </ul>
+                      </nav>
                     </li>
 
                     <li class="md-nav__item">
-                      <a
-                        href="/FFram/reference/benchmarks/"
-                        class="md-nav__link"
-                      >
+                      <a href="../benchmarks/" class="md-nav__link">
                         <span class="md-ellipsis"> Benchmarks </span>
                       </a>
                     </li>
 
                     <li class="md-nav__item">
-                      <a
-                        href="/FFram/reference/general_project.md"
-                        class="md-nav__link"
-                      >
+                      <a href="../general_project.md" class="md-nav__link">
                         <span class="md-ellipsis"> General Project </span>
                       </a>
                     </li>
 
                     <li class="md-nav__item">
                       <a
-                        href="/FFram/reference/improvement_suggestions.md"
+                        href="../improvement_suggestions.md"
                         class="md-nav__link"
                       >
                         <span class="md-ellipsis">
@@ -358,7 +442,7 @@
                         <ul class="md-nav__list" data-md-scrollfix>
                           <li class="md-nav__item">
                             <a
-                              href="/FFram/reference/reference/installation/"
+                              href="../reference/installation/"
                               class="md-nav__link"
                             >
                               <span class="md-ellipsis"> Installation </span>
@@ -367,7 +451,7 @@
 
                           <li class="md-nav__item">
                             <a
-                              href="/FFram/reference/reference/quick-start/"
+                              href="../reference/quick-start/"
                               class="md-nav__link"
                             >
                               <span class="md-ellipsis"> Quick Start </span>
@@ -376,7 +460,7 @@
 
                           <li class="md-nav__item">
                             <a
-                              href="/FFram/reference/reference/benchmarks/"
+                              href="../reference/benchmarks/"
                               class="md-nav__link"
                             >
                               <span class="md-ellipsis"> Benchmarks </span>
@@ -401,14 +485,231 @@
                 <nav
                   class="md-nav md-nav--secondary"
                   aria-label="Table of contents"
-                ></nav>
+                >
+                  <label class="md-nav__title" for="__toc">
+                    <span class="md-nav__icon md-icon"></span>
+                    Table of contents
+                  </label>
+                  <ul
+                    class="md-nav__list"
+                    data-md-component="toc"
+                    data-md-scrollfix
+                  >
+                    <li class="md-nav__item">
+                      <a href="#1-research-questions" class="md-nav__link">
+                        <span class="md-ellipsis"> 1. Research Questions </span>
+                      </a>
+                    </li>
+
+                    <li class="md-nav__item">
+                      <a href="#2-experimental-setup" class="md-nav__link">
+                        <span class="md-ellipsis"> 2. Experimental Setup </span>
+                      </a>
+                    </li>
+
+                    <li class="md-nav__item">
+                      <a
+                        href="#3-data-collection-analysis"
+                        class="md-nav__link"
+                      >
+                        <span class="md-ellipsis">
+                          3. Data Collection &amp; Analysis
+                        </span>
+                      </a>
+                    </li>
+
+                    <li class="md-nav__item">
+                      <a href="#4-reporting-conventions" class="md-nav__link">
+                        <span class="md-ellipsis">
+                          4. Reporting Conventions
+                        </span>
+                      </a>
+                    </li>
+
+                    <li class="md-nav__item">
+                      <a
+                        href="#5-reproducibility-checklist"
+                        class="md-nav__link"
+                      >
+                        <span class="md-ellipsis">
+                          5. Reproducibility Checklist
+                        </span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
               </div>
             </div>
           </div>
 
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
-              <h1>404 - Not found</h1>
+              <h1 id="research-guide">
+                Research Guide<a
+                  class="headerlink"
+                  href="#research-guide"
+                  title="Permanent link"
+                  >&para;</a
+                >
+              </h1>
+              <p>
+                This guide outlines the methodology, experimental design, and
+                reproducibility steps required to produce a rigorous IEEE‑style
+                paper for the <strong>FFram</strong> project.
+              </p>
+              <h2 id="1-research-questions">
+                1. Research Questions<a
+                  class="headerlink"
+                  href="#1-research-questions"
+                  title="Permanent link"
+                  >&para;</a
+                >
+              </h2>
+              <ol>
+                <li>
+                  <strong>RQ1 – Probing Efficiency</strong>: Does native
+                  container probing (via PyAV) reduce metadata extraction
+                  latency compared to a <code>ffprobe</code> subprocess?
+                </li>
+                <li>
+                  <strong>RQ2 – Quality‑Targeted Encoding</strong>: Can an
+                  automated VMAF‑driven CRF search (Auto‑CRF) reliably achieve a
+                  perceptual quality floor while controlling output size?
+                </li>
+                <li>
+                  <strong>RQ3 – Parallel Cluster Gains</strong>: What speedup
+                  does the lightweight XML‑RPC cluster provide relative to
+                  single‑node execution?
+                </li>
+                <li>
+                  <strong>RQ4 – Fault‑Tolerant Execution</strong>: Can
+                  rule‑based heuristics recover from out‑of‑memory and
+                  GPU‑encoder failures without manual intervention?
+                </li>
+              </ol>
+              <h2 id="2-experimental-setup">
+                2. Experimental Setup<a
+                  class="headerlink"
+                  href="#2-experimental-setup"
+                  title="Permanent link"
+                  >&para;</a
+                >
+              </h2>
+              <ul>
+                <li>
+                  <strong>Hardware</strong>: Single workstation (CPU cores,
+                  optional GPU). All experiments run on the same machine to
+                  isolate algorithmic effects.
+                </li>
+                <li>
+                  <strong>Software Stack</strong>: Python 3.11, FFmpeg with
+                  <code>libvmaf</code>, PyAV, standard‑library
+                  <code>xmlrpc</code>.
+                </li>
+                <li><strong>Benchmarks</strong>:</li>
+                <li>
+                  <em>Metadata probe</em>: 20 iterations of a 1‑second synthetic
+                  clip.
+                </li>
+                <li>
+                  <em>Auto‑CRF</em>: Two synthetic clips (high‑motion,
+                  low‑motion) encoded with static CRF 23 and Auto‑CRF targeting
+                  VMAF 95.
+                </li>
+                <li>
+                  <em>Cluster</em>: Two worker nodes on ports 8001/8002
+                  processing a 4K clip via a segment‑encode‑concatenate
+                  pipeline.
+                </li>
+                <li>
+                  <em>Resiliency</em>: Fault injection via
+                  <code>unittest.mock</code> for OOM and NVENC failures.
+                </li>
+                <li>
+                  <strong>Metrics</strong>: Latency (ms), VMAF score, output
+                  size (KB), speedup, efficiency, and success/failure of
+                  recovery.
+                </li>
+              </ul>
+              <h2 id="3-data-collection-analysis">
+                3. Data Collection &amp; Analysis<a
+                  class="headerlink"
+                  href="#3-data-collection-analysis"
+                  title="Permanent link"
+                  >&para;</a
+                >
+              </h2>
+              <ul>
+                <li>
+                  Use <code>time.perf_counter</code> for latency measurements.
+                </li>
+                <li>
+                  Compute VMAF with <code>libvmaf</code>; report mean ± SD.
+                </li>
+                <li>
+                  Size change: (\Delta S = (S_{auto} - S_{static}) /
+                  S_{static}).
+                </li>
+                <li>
+                  For the cluster, calculate speedup (S(p) = T_1 / T_p) and
+                  efficiency (E = S(p) / p).
+                </li>
+                <li>
+                  Summarize fault‑injection outcomes (recovery applied vs. not).
+                </li>
+              </ul>
+              <h2 id="4-reporting-conventions">
+                4. Reporting Conventions<a
+                  class="headerlink"
+                  href="#4-reporting-conventions"
+                  title="Permanent link"
+                  >&para;</a
+                >
+              </h2>
+              <ul>
+                <li>
+                  Present results in tables and figures with clear captions.
+                </li>
+                <li>Include confidence intervals where appropriate.</li>
+                <li>Discuss internal and external validity threats.</li>
+                <li>
+                  Highlight any missing data (e.g., unavailable 4K test video)
+                  and its impact on reproducibility.
+                </li>
+              </ul>
+              <h2 id="5-reproducibility-checklist">
+                5. Reproducibility Checklist<a
+                  class="headerlink"
+                  href="#5-reproducibility-checklist"
+                  title="Permanent link"
+                  >&para;</a
+                >
+              </h2>
+              <ul>
+                <li>
+                  All benchmark scripts are version‑controlled (see
+                  <code>website_docs/reference/benchmarks.md</code>).
+                </li>
+                <li>
+                  Exact command lines and library versions are listed in the
+                  <em>Environment</em> table.
+                </li>
+                <li>
+                  Random seeds are fixed for deterministic behaviour where
+                  applicable.
+                </li>
+                <li>
+                  Raw output logs are archived in the repository's
+                  <code>benchmarks/logs/</code> folder.
+                </li>
+              </ul>
+              <hr />
+              <p>
+                <em
+                  >Use this guide as a template when extending the paper or
+                  adding new experiments.</em
+                >
+              </p>
             </article>
           </div>
 
@@ -445,9 +746,9 @@
     <script id="__config" type="application/json">
       {
         "annotate": null,
-        "base": "/FFram/reference/",
+        "base": "..",
         "features": [],
-        "search": "/FFram/reference/assets/javascripts/workers/search.2c215733.min.js",
+        "search": "../assets/javascripts/workers/search.2c215733.min.js",
         "tags": null,
         "translations": {
           "clipboard.copied": "Copied to clipboard",
@@ -465,6 +766,6 @@
       }
     </script>
 
-    <script src="/FFram/reference/assets/javascripts/bundle.d7400e89.min.js"></script>
+    <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
   </body>
 </html>
