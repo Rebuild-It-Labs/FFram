@@ -6,7 +6,7 @@ ffram is a fast, highly interactive Terminal User Interface (TUI) for executing 
 
 ## Features
 
-- 102 High-Performance Media Operations across 18 Specialized Categories
+- High-Performance Categorized Media Operations
 - Interactive TUI built with InquirerPy and rich
 - Fuzzy Search to instantly find operations by name or description
 - Native File Picker Dialogs (press Enter to browse visually)
@@ -20,7 +20,7 @@ ffram is a fast, highly interactive Terminal User Interface (TUI) for executing 
 pip install ffram
 ```
 
-*Requires Python 3.9+ and FFmpeg installed on your system PATH.*
+_Requires Python 3.9+ and FFmpeg installed on your system PATH._
 
 ## Usage
 
