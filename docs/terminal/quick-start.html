@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Start - FFram Documentation</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+<div class="container header-content">
+<div>
+<h1><a href="../index.html">FFram</a></h1>
+<div style="margin-top: 0.5rem">
+<img alt="Open Source" src="https://img.shields.io/badge/Open%20Source-Yes-green"/>
+<img alt="Python 3.8+" src="https://img.shields.io/badge/python-3.8+-blue.svg"/>
+</div>
+</div>
+<nav role="navigation">
+<ul>
+<li><a href="#about">About</a></li>
+<li><a href="#documentation">Documentation</a></li>
+<li><a href="#contribute">Contribute</a></li>
+</ul>
+</nav>
+</div>
+</header>
+    <div class="container main-layout">
+        <main>
+            <section class="intro-section" style="padding: 2rem; background: var(--color-light-bg); border-radius: 0.5rem; border: 0.05rem solid var(--color-border);">
+                <article class="md-content__inner md-typeset">
+<h1 id="quick-start">
+                Quick Start<a class="headerlink" href="#quick-start" title="Permanent link"></a>
+</h1>
+<p>To launch the FFram interactive CLI, simply run:</p>
+<pre><code class="language-bash">ffram
+</code></pre>
+<p>
+                If you want to skip the file selection prompt and directly load
+                a video, use the <code>-f</code> flag:
+              </p>
+<pre><code class="language-bash">ffram -f "/path/to/my/video.mp4"
+</code></pre>
+<h2 id="basic-operations">
+                Basic Operations<a class="headerlink" href="#basic-operations" title="Permanent link"></a>
+</h2>
+<p>
+                Once launched, you can navigate the menu using your keyboard
+                arrow keys. Press <code>Enter</code> to select a category, and
+                then select the specific operation you want to run.
+              </p>
+</article>
+            </section>
+        </main>
+        <aside class="sidebar">
+<div class="widget">
+<h3>Get FFram</h3>
+<p>Latest release: <strong id="ffram-version">v1.0.0</strong></p>
+<p>Install via pip:</p>
+<div class="install-widget">
+<pre><code id="ffram-install-cmd">pip install ffram</code></pre>
+<button class="button primary" id="copy-btn" onclick="copyInstallCmd()" style="
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+                margin-top: 0.5rem;
+                cursor: pointer;
+              "><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: middle;"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1h-3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/></svg></button>
+</div>
+</div>
+<div class="widget">
+<h3>Resources</h3>
+<ul class="clean-list">
+<li>
+<a href="https://github.com/Rebuild-It-Labs/FFram" rel="noopener noreferrer" target="_blank">Source Code</a>
+</li>
+<li>
+<a href="https://github.com/Rebuild-It-Labs/FFram/issues" rel="noopener noreferrer" target="_blank">Bug Tracker</a>
+</li>
+<li>
+<a href="https://github.com/Rebuild-It-Labs/FFram/pulls" rel="noopener noreferrer" target="_blank">Pull Requests</a>
+</li>
+</ul>
+</div>
+<div class="widget">
+<h3>Sponsors</h3>
+<p>FFram is supported by <strong>Rebuild-It-Labs</strong>.</p>
+</div>
+</aside>
+    </div>
+    <footer>
+<div class="container">
+<p>
+          © 2026 Rebuild-It-Labs ·
+          <a href="https://github.com/Rebuild-It-Labs/FFram" rel="noopener noreferrer" target="_blank">GitHub Repository</a>
+</p>
+<p>Designed for speed, simplicity, and search engine optimization.</p>
+<!-- <div class="contributor-cards">
+                <img src="images/contributor1.png" alt="Contributor 1 placeholder">
+                <img src="images/contributor2.png" alt="Contributor 2 placeholder">
+            </div> -->
+</div>
+</footer>
+<script>
+  function copyInstallCmd() {
+    const cmdText = document.getElementById("ffram-install-cmd").innerText;
+    navigator.clipboard.writeText(cmdText).then(() => {
+      const btn = document.getElementById("copy-btn");
+      const checkSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: middle;"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg>';
+      const clipSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: middle;"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1h-3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/></svg>';
+      btn.innerHTML = checkSvg;
+      setTimeout(() => {
+        btn.innerHTML = clipSvg;
+      }, 2000);
+    });
+  }
+</script>
+</body>
+</html>

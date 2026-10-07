@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FFram - Fast FFmpeg Renderer</title>
+    <title>FFram</title>
     <meta
       name="description"
       content="FFram is a fast, highly interactive Terminal User Interface (TUI) for executing complex media operations."
@@ -168,7 +168,7 @@
           </ul>
           <p style="margin-top: 1rem">
             <a
-              href="reference/reference/benchmarks/index.html"
+              href="terminal/benchmarks.html"
               class="button secondary"
               >View Full Benchmark Data</a
             >
@@ -203,36 +203,16 @@ ffram -f "C:\path\to\video.mp4"
           </p>
           <ul class="clean-list">
             <li>
-              <a
-                href="https://github.com/Rebuild-It-Labs/FFram#installation"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Installation Guide</a
-              >
+              <a href="terminal/installation.html">Installation Guide</a>
             </li>
             <li>
-              <a
-                href="https://github.com/Rebuild-It-Labs/FFram#quick-start"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Quick Start Tutorial</a
-              >
+              <a href="terminal/quick-start.html">Quick Start Tutorial</a>
             </li>
             <li>
-              <a
-                href="https://github.com/Rebuild-It-Labs/FFram#api-reference"
-                target="_blank"
-                rel="noopener noreferrer"
-                >API Reference</a
-              >
+              <a href="terminal/benchmarks.html">Benchmarks</a>
             </li>
             <li>
-              <a
-                href="https://github.com/Rebuild-It-Labs/FFram/tree/main/examples"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Advanced Examples</a
-              >
+              <a href="terminal/research_guide.html">Research Guide</a>
             </li>
           </ul>
         </section>
@@ -303,9 +283,7 @@ ffram -f "C:\path\to\video.mp4"
                 cursor: pointer;
               "
               onclick="copyInstallCmd()"
-            >
-              Copy
-            </button>
+            ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: middle;"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1h-3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/></svg></button>
           </div>
         </div>
 
@@ -385,9 +363,9 @@ ffram -f "C:\path\to\video.mp4"
         const cmdText = document.getElementById("ffram-install-cmd").innerText;
         navigator.clipboard.writeText(cmdText).then(() => {
           const btn = document.getElementById("copy-btn");
-          btn.innerText = "Copied!";
+          btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: middle;"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg>';
           setTimeout(() => {
-            btn.innerText = "Copy";
+            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: middle;"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1h-3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/></svg>';
           }, 2000);
         });
       }
