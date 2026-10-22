@@ -32,14 +32,14 @@ class BatchOps(BaseOperation):
         if op_id == 94:
             return ["-i", f, "-vn", "-c:a", "libmp3lame", "-q:a", "2"], d / f"{s}.mp3"
         if op_id == 95:
-            return ["-i", f, "-vf", "scale=-2:720", "-c:v", "libx264", "-crf", "23", "-c:a", "aac"], d / f"{s}_720p.mp4"
+            return ["-i", f, "-vf", "scale=-2:720", "-c:v", "libx264", "-crf", "23", "-c:a", "aac", "-movflags", "+faststart"], d / f"{s}_720p.mp4"
         if op_id == 96:
-            return ["-i", f, "-c:v", "libx264", "-crf", "28", "-c:a", "aac", "-b:a", "128k"], d / f"{s}_compressed.mp4"
+            return ["-i", f, "-c:v", "libx264", "-crf", "28", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart"], d / f"{s}_compressed.mp4"
         if op_id == 97:
             return ["-i", f, "-vn", "-c:a", "copy"], d / f"{s}.m4a"
         if op_id == 98:
             a = str(Path(params["second_input_path"]))
-            return ["-i", f, "-i", a, "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-shortest"], d / f"{s}_new.mp4"
+            return ["-i", f, "-i", a, "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-shortest", "-max_interleave_delta", "0", "-max_muxing_queue_size", "2048", "-movflags", "+faststart"], d / f"{s}_new.mp4"
         return None, None
 
     def execute(self, operation_id, params):

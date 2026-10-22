@@ -22,13 +22,13 @@ class ConvertOps(BaseOperation):
     def execute(self, operation_id, params):
         i = str(Path(params["input_path"]))
         cmd_map = {
-            17: (["-i", i, "-c", "copy"], "_converted", ".mkv"),
-            18: (["-i", i, "-c", "copy"], "_converted", ".mp4"),
-            19: (["-i", i, "-c:v", "libx264", "-c:a", "aac"], "_converted", ".mp4"),
-            20: (["-i", i, "-c:v", "libx264", "-c:a", "aac"], "_converted", ".mp4"),
-            21: (["-i", i, "-c:v", "libx264", "-c:a", "aac"], "_converted", ".mp4"),
+            17: (["-i", i, "-c", "copy", "-max_interleave_delta", "0", "-max_muxing_queue_size", "2048"], "_converted", ".mkv"),
+            18: (["-i", i, "-c", "copy", "-max_interleave_delta", "0", "-max_muxing_queue_size", "2048", "-movflags", "+faststart"], "_converted", ".mp4"),
+            19: (["-i", i, "-c:v", "libx264", "-c:a", "aac", "-movflags", "+faststart"], "_converted", ".mp4"),
+            20: (["-i", i, "-c:v", "libx264", "-c:a", "aac", "-movflags", "+faststart"], "_converted", ".mp4"),
+            21: (["-i", i, "-c:v", "libx264", "-c:a", "aac", "-movflags", "+faststart"], "_converted", ".mp4"),
             22: (["-i", i, "-c:v", "libvpx-vp9", "-c:a", "libopus"], "_converted", ".webm"),
-            23: (["-i", i, "-c:v", "libx264", "-c:a", "aac"], "_converted", ".mov"),
+            23: (["-i", i, "-c:v", "libx264", "-c:a", "aac", "-movflags", "+faststart"], "_converted", ".mov"),
             24: (["-i", i, "-c:v", "mpeg4", "-c:a", "mp3"], "_converted", ".avi"),
         }
         return self.run_map(operation_id, params, cmd_map, "Converting")

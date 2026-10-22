@@ -31,7 +31,7 @@ class CompressOps(BaseOperation):
             best_crf = suggest_optimal_crf(i, target_vmaf=95.0, on_progress=update_progress)
             console.print(f"  [bold green]Optimal CRF found: {best_crf}[/bold green]")
             
-            cmd = ["-i", i, "-c:v", "libx264", "-crf", str(best_crf), "-preset", "slow", "-c:a", "aac", "-b:a", "128k"]
+            cmd = ["-i", i, "-c:v", "libx264", "-crf", str(best_crf), "-preset", "slow", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart"]
             output_path = self._build_output_path(Path(i), "_auto_crf", ".mp4")
             cmd.append(str(output_path))
             return self.run_op(cmd, output_path, params.get("duration", 0), "Encoding with optimal CRF")
@@ -54,11 +54,11 @@ class CompressOps(BaseOperation):
                 return OperationResult(False, "Cluster encode failed")
 
         cmd_map = {
-            25: (["-i", i, "-c:v", "libx264", "-crf", "28", "-c:a", "aac", "-b:a", "128k"], "_compressed", ".mp4"),
-            26: (["-i", i, "-c:v", "libx264", "-crf", "20", "-preset", "medium", "-c:a", "aac", "-b:a", "192k"], "_compressed", ".mp4"),
-            27: (["-i", i, "-c:v", "libx264", "-crf", "30", "-c:a", "aac", "-b:a", "96k"], "_compressed", ".mp4"),
-            28: (["-i", i, "-c:v", "libx265", "-crf", "28", "-c:a", "aac", "-b:a", "128k"], "_compressed", ".mp4"),
-            29: (["-i", i, "-c:v", "libx265", "-crf", "32", "-c:a", "aac", "-b:a", "96k"], "_compressed", ".mp4"),
-            30: (["-i", i, "-b:v", "1500k", "-c:a", "aac", "-b:a", "128k"], "_compressed", ".mp4"),
+            25: (["-i", i, "-c:v", "libx264", "-crf", "28", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart"], "_compressed", ".mp4"),
+            26: (["-i", i, "-c:v", "libx264", "-crf", "20", "-preset", "medium", "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart"], "_compressed", ".mp4"),
+            27: (["-i", i, "-c:v", "libx264", "-crf", "30", "-c:a", "aac", "-b:a", "96k", "-movflags", "+faststart"], "_compressed", ".mp4"),
+            28: (["-i", i, "-c:v", "libx265", "-crf", "28", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart"], "_compressed", ".mp4"),
+            29: (["-i", i, "-c:v", "libx265", "-crf", "32", "-c:a", "aac", "-b:a", "96k", "-movflags", "+faststart"], "_compressed", ".mp4"),
+            30: (["-i", i, "-b:v", "1500k", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart"], "_compressed", ".mp4"),
         }
         return self.run_map(operation_id, params, cmd_map, "Compressing")

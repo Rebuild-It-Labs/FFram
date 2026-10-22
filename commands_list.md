@@ -56,49 +56,74 @@ ffmpeg -i input.mp4 -vn -c:a copy output.m4a
 ### 9. Add audio to a silent video
 
 ```bat
-ffmpeg -i video.mp4 -i audio.mp3 -c:v copy -c:a aac -shortest output.mp4
+ffmpeg -i video.mp4 -i audio.mp3 -c:v copy -c:a aac -shortest -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 10. Add another audio track
 
 ```bat
-ffmpeg -i video.mp4 -i audio.mp3 -map 0:v -map 0:a? -map 1:a -c:v copy -c:a aac output.mp4
+ffmpeg -i video.mp4 -i audio.mp3 -map 0:v -map 0:a? -map 1:a -c:v copy -c:a aac -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 11. Replace existing video audio
 
 ```bat
-ffmpeg -i video.mp4 -i newaudio.mp3 -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -shortest output.mp4
+ffmpeg -i video.mp4 -i newaudio.mp3 -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -shortest -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 12. Add audio while keeping original audio
 
 ```bat
-ffmpeg -i video.mp4 -i audio.mp3 -map 0:v -map 0:a? -map 1:a -c:v copy -c:a aac output.mp4
+ffmpeg -i video.mp4 -i audio.mp3 -map 0:v -map 0:a? -map 1:a -c:v copy -c:a aac -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 13. Add audio and loop it if shorter
 
 ```bat
-ffmpeg -stream_loop -1 -i audio.mp3 -i video.mp4 -map 1:v -map 0:a -c:v copy -c:a aac -shortest output.mp4
+ffmpeg -stream_loop -1 -i audio.mp3 -i video.mp4 -map 1:v -map 0:a -c:v copy -c:a aac -shortest -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 14. Add background music and keep original audio
 
 ```bat
-ffmpeg -i video.mp4 -i music.mp3 -filter_complex "[0:a][1:a]amix=inputs=2:duration=first" -c:v copy -c:a aac output.mp4
+ffmpeg -i video.mp4 -i music.mp3 -filter_complex "[0:a][1:a]amix=inputs=2:duration=first" -c:v copy -c:a aac -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 15. Add background music at 20% volume
 
 ```bat
-ffmpeg -i video.mp4 -i music.mp3 -filter_complex "[1:a]volume=0.2[m];[0:a][m]amix=inputs=2:duration=first" -c:v copy -c:a aac output.mp4
+ffmpeg -i video.mp4 -i music.mp3 -filter_complex "[1:a]volume=0.2[m];[0:a][m]amix=inputs=2:duration=first" -c:v copy -c:a aac -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 16. Replace audio and make video duration match audio
 
 ```bat
-ffmpeg -i video.mp4 -i audio.mp3 -map 0:v -map 1:a -c:v copy -c:a aac -shortest output.mp4
+ffmpeg -i video.mp4 -i audio.mp3 -map 0:v -map 1:a -c:v copy -c:a aac -shortest -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
+```
+
+### 103. Transfer Audio Track Between Videos (Lossless Remux)
+
+Extract a chosen audio track from a video containing multiple audio tracks and inject it into a 2nd video without audio or video re-encoding (100% lossless quality).
+Includes `-max_interleave_delta 0` and `-max_muxing_queue_size 2048` to prevent audio/video buffer starvation and freezing when muxing multi-track videos.
+
+#### Option A: ONLY New Audio (Replace all existing audio in 2nd video)
+```bat
+ffmpeg -i target.mp4 -i source.mp4 -map 0:v:0 -map 1:a:0 -map 0:s? -map_metadata 0 -c:v copy -c:a copy -c:s copy -disposition:a:0 default -max_interleave_delta 0 -max_muxing_queue_size 2048 output.mp4
+```
+
+#### Option B: Add as Additional Audio Track (Keep 2nd video's existing audio tracks)
+```bat
+ffmpeg -i target.mp4 -i source.mp4 -map 0:v:0 -map 0:a -map 1:a:1 -map 0:s? -map_metadata 0 -c:v copy -c:a copy -c:s copy -max_interleave_delta 0 -max_muxing_queue_size 2048 output.mp4
+```
+
+#### Option C: Place as Primary / Default Audio Track (Keep 2nd video's original audio after it)
+```bat
+ffmpeg -i target.mp4 -i source.mp4 -map 0:v:0 -map 1:a:1 -map 0:a -map 0:s? -map_metadata 0 -c:v copy -c:a copy -c:s copy -disposition:a:0 default -max_interleave_delta 0 -max_muxing_queue_size 2048 output.mp4
+```
+
+#### Option D: Replace a Specific Audio Track in 2nd Video
+```bat
+ffmpeg -i target.mp4 -i source.mp4 -map 0:v:0 -map 1:a:1 -map 0:a:1 -map 0:s? -map_metadata 0 -c:v copy -c:a copy -c:s copy -max_interleave_delta 0 -max_muxing_queue_size 2048 output.mp4
 ```
 
 ---
@@ -108,13 +133,13 @@ ffmpeg -i video.mp4 -i audio.mp3 -map 0:v -map 1:a -c:v copy -c:a aac -shortest 
 ### 17. MP4 → MKV
 
 ```bat
-ffmpeg -i input.mp4 -c copy output.mkv
+ffmpeg -i input.mp4 -c copy -max_interleave_delta 0 -max_muxing_queue_size 2048 output.mkv
 ```
 
 ### 18. MKV → MP4
 
 ```bat
-ffmpeg -i input.mkv -c copy output.mp4
+ffmpeg -i input.mkv -c copy -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 19. MOV → MP4
@@ -246,31 +271,31 @@ ffmpeg -i input.mp4 -vf scale=-2:720 -c:v libx264 -crf 28 -c:a aac output.mp4
 ### 38. Cut first 30 seconds
 
 ```bat
-ffmpeg -i input.mp4 -t 30 -c copy output.mp4
+ffmpeg -i input.mp4 -t 30 -c copy -avoid_negative_ts make_zero -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 39. Start at 1 minute
 
 ```bat
-ffmpeg -ss 00:01:00 -i input.mp4 -c copy output.mp4
+ffmpeg -ss 00:01:00 -i input.mp4 -c copy -avoid_negative_ts make_zero -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 40. Cut from 1:00 to 2:30
 
 ```bat
-ffmpeg -ss 00:01:00 -to 00:02:30 -i input.mp4 -c copy output.mp4
+ffmpeg -ss 00:01:00 -to 00:02:30 -i input.mp4 -c copy -avoid_negative_ts make_zero -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 41. Cut 30-second clip
 
 ```bat
-ffmpeg -ss 00:01:00 -i input.mp4 -t 30 -c copy output.mp4
+ffmpeg -ss 00:01:00 -i input.mp4 -t 30 -c copy -avoid_negative_ts make_zero -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 42. Accurate re-encoded cut
 
 ```bat
-ffmpeg -ss 00:01:00 -i input.mp4 -t 30 -c:v libx264 -c:a aac output.mp4
+ffmpeg -ss 00:01:00 -i input.mp4 -t 30 -c:v libx264 -c:a aac -movflags +faststart output.mp4
 ```
 
 ---
@@ -490,7 +515,7 @@ file 'video3.mp4'
 Then:
 
 ```bat
-ffmpeg -f concat -safe 0 -i list.txt -c copy output.mp4
+ffmpeg -f concat -safe 0 -i list.txt -c copy -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 74. Concatenate different videos
@@ -503,6 +528,14 @@ ffmpeg -f concat -safe 0 -i list.txt -c:v libx264 -c:a aac output.mp4
 
 ```bat
 ffmpeg -i video1.mp4 -i video2.mp4 -filter_complex "[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[v][a]" -map "[v]" -map "[a]" output.mp4
+```
+
+### 104. Create a Collage View (Top and Bottom) for Visual Quality Comparison
+
+Stack two videos vertically (`vstack`) for visual quality comparison with filename labels at the top end of each video and an optional separating divider line:
+
+```bat
+ffmpeg -i original.mp4 -i encoded.mp4 -filter_complex "[0:v]scale=1920:-2:flags=lanczos,drawtext=text='Top: original.mp4':x=24:y=20:fontsize=28:fontcolor=white:box=1:boxcolor=black@0.7:boxborderw=8,pad=1920:ih+4:0:0:color=yellow[top];[1:v]scale=1920:-2:flags=lanczos,drawtext=text='Bottom: encoded.mp4':x=24:y=20:fontsize=28:fontcolor=white:box=1:boxcolor=black@0.7:boxborderw=8[bot];[top][bot]vstack=inputs=2[v]" -map "[v]" -map 0:a? -c:v libx264 -crf 18 -preset fast -c:a aac -b:a 192k -shortest collage_compare.mp4
 ```
 
 ---
@@ -586,7 +619,7 @@ ffmpeg -i input.mp4 -vf "subtitles=subtitles.srt" output.mp4
 ### 87. Add selectable subtitle track
 
 ```bat
-ffmpeg -i input.mp4 -i subtitles.srt -c:v copy -c:a copy -c:s mov_text output.mp4
+ffmpeg -i input.mp4 -i subtitles.srt -c:v copy -c:a copy -c:s mov_text -max_interleave_delta 0 -max_muxing_queue_size 2048 -movflags +faststart output.mp4
 ```
 
 ### 88. Extract subtitles
@@ -598,7 +631,7 @@ ffmpeg -i input.mkv -map 0:s:0 subtitles.srt
 ### 89. Remove subtitles
 
 ```bat
-ffmpeg -i input.mkv -map 0:v -map 0:a -c copy output.mkv
+ffmpeg -i input.mkv -map 0:v -map 0:a -c copy -max_interleave_delta 0 -max_muxing_queue_size 2048 output.mkv
 ```
 
 ---

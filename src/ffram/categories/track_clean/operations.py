@@ -17,8 +17,8 @@ class TrackCleanOps(BaseOperation):
     def execute(self, operation_id, params):
         i = str(Path(params["input_path"]))
         cmd_map = {
-            43: (["-i", i, "-an", "-c:v", "copy"], "_noaudio", ".mp4"),
+            43: (["-i", i, "-an", "-c:v", "copy", "-movflags", "+faststart"], "_noaudio", ".mp4"),
             44: (["-i", i, "-vn", "-c:a", "copy"], "_audioonly", ".m4a"),
-            45: (["-i", i, "-an"], "_silent", ".mp4"),
+            45: (["-i", i, "-an", "-movflags", "+faststart"], "_silent", ".mp4"),
         }
         return self.run_map(operation_id, params, cmd_map, "Removing tracks")

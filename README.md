@@ -7,6 +7,7 @@ ffram is a fast, highly interactive Terminal User Interface (TUI) for executing 
 ## Features
 
 - High-Performance Categorized Media Operations
+- Multi-Audio Track Management: Lossless track extraction, placement, and remuxing across videos
 - Interactive TUI built with InquirerPy and rich
 - Fuzzy Search to instantly find operations by name or description
 - Native File Picker Dialogs (press Enter to browse visually)

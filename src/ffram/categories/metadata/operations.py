@@ -32,15 +32,15 @@ class MetadataOps(BaseOperation):
 
         if operation_id == 91:
             output_path = params.get("output_path") or self._build_output_path(input_path, "_clean")
-            cmd_args = ["-i", i, "-map_metadata", "-1", "-c", "copy", str(output_path)]
+            cmd_args = ["-i", i, "-map_metadata", "-1", "-c", "copy", "-max_interleave_delta", "0", "-max_muxing_queue_size", "2048", str(output_path)]
         elif operation_id == 92:
             title = params.get("title", "My Video")
             output_path = params.get("output_path") or self._build_output_path(input_path, "_titled")
-            cmd_args = ["-i", i, "-metadata", f"title={title}", "-c", "copy", str(output_path)]
+            cmd_args = ["-i", i, "-metadata", f"title={title}", "-c", "copy", "-max_interleave_delta", "0", "-max_muxing_queue_size", "2048", str(output_path)]
         elif operation_id == 93:
             artist = params.get("artist", "Unknown")
             output_path = params.get("output_path") or self._build_output_path(input_path, "_tagged")
-            cmd_args = ["-i", i, "-metadata", f"artist={artist}", "-c", "copy", str(output_path)]
+            cmd_args = ["-i", i, "-metadata", f"artist={artist}", "-c", "copy", "-max_interleave_delta", "0", "-max_muxing_queue_size", "2048", str(output_path)]
         else:
             return OperationResult(False, f"Unknown operation ID: {operation_id}")
 

@@ -47,11 +47,47 @@ class BaseOperation(ABC):
             counter += 1
         return output
 
+    def _sanitize_muxing_args(self, cmd_args: list[str], output_path: Optional[Path]) -> list[str]:
+        """Automatically optimize container interleaving, buffer queues, and streaming headers."""
+        if not output_path or not cmd_args:
+            return cmd_args
+
+        ext = output_path.suffix.lower()
+        args = list(cmd_args)
+
+        has_output_at_end = (args[-1] == str(output_path))
+        target_args = args[:-1] if has_output_at_end else args
+
+        has_multiple_inputs = (target_args.count("-i") > 1)
+        has_stream_copy = any(
+            "-c" in a or "-c:v" in a or "-c:a" in a or "-c:s" in a
+            for a in target_args
+        ) and "copy" in target_args
+
+        # 1. MP4 / MOV faststart optimization for instant playback and seeking
+        if ext in [".mp4", ".m4v", ".mov"]:
+            if "-movflags" not in target_args:
+                target_args.extend(["-movflags", "+faststart"])
+
+        # 2. Prevent de-interleaving and audio/video starvation on multi-input or stream-copied media
+        if ext in [".mkv", ".mp4", ".m4v", ".mov", ".webm", ".avi"]:
+            if has_multiple_inputs or has_stream_copy:
+                if "-max_interleave_delta" not in target_args:
+                    target_args.extend(["-max_interleave_delta", "0"])
+                if "-max_muxing_queue_size" not in target_args:
+                    target_args.extend(["-max_muxing_queue_size", "2048"])
+
+        if has_output_at_end:
+            target_args.append(str(output_path))
+        return target_args
+
     def run_op(self, cmd_args, output_path, duration=0, desc="Processing"):
         """Run ffmpeg with progress bar and return OperationResult."""
         from ffram.core.runner import run_ffmpeg
         from ffram.ui.progress_bar import FFmpegProgressBar
         from ffram.ui.console import print_command, format_elapsed
+
+        cmd_args = self._sanitize_muxing_args(cmd_args, output_path)
 
         print_command(["ffmpeg", "-y"] + cmd_args)
         progress = FFmpegProgressBar(description=desc)

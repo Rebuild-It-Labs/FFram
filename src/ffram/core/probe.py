@@ -32,6 +32,70 @@ class StreamInfo:
     duration: float = 0.0
     language: str = ""
     title: str = ""
+    # Color & Dynamic Range
+    color_space: str = ""
+    color_primaries: str = ""
+    color_trc: str = ""
+    bits_per_raw_sample: int = 0
+
+    @property
+    def bit_depth(self) -> int:
+        """Estimate color bit depth (e.g. 8, 10, 12, 16)."""
+        if self.bits_per_raw_sample and self.bits_per_raw_sample > 0:
+            return self.bits_per_raw_sample
+        p = self.pix_fmt.lower()
+        if any(k in p for k in ["12le", "12be", "p12"]):
+            return 12
+        if any(k in p for k in ["10le", "10be", "p10"]):
+            return 10
+        if any(k in p for k in ["16le", "16be"]):
+            return 16
+        if any(k in p for k in ["9le", "9be"]):
+            return 9
+        return 8
+
+    @property
+    def is_hdr(self) -> bool:
+        """Return True if stream uses HDR transfer characteristics or wide color gamut."""
+        trc = str(self.color_trc).lower()
+        pri = str(self.color_primaries).lower()
+        if any(h in trc for h in ["smpte2084", "arib-std-b67", "hlg", "pq", "16", "18"]):
+            return True
+        if ("bt2020" in pri or "9" == pri) and self.bit_depth >= 10:
+            return True
+        return False
+
+    @property
+    def hdr_format(self) -> str:
+        """User-friendly HDR format label (HDR10, HLG, or SDR)."""
+        trc = str(self.color_trc).lower()
+        if "smpte2084" in trc or trc == "16" or "pq" in trc:
+            return "HDR10"
+        if "arib-std-b67" in trc or trc == "18" or "hlg" in trc:
+            return "HLG"
+        if self.is_hdr:
+            return "HDR"
+        return "SDR"
+
+    @property
+    def audio_summary(self) -> str:
+        """User-friendly summary of the audio stream."""
+        parts = []
+        if self.codec_name and self.codec_name != "unknown":
+            parts.append(self.codec_name.upper())
+        if self.channel_layout:
+            parts.append(self.channel_layout)
+        elif self.channels:
+            parts.append(f"{self.channels}ch")
+        if self.sample_rate:
+            parts.append(f"{self.sample_rate}Hz")
+        if self.bitrate and self.bitrate > 0:
+            parts.append(f"{self.bitrate // 1000}kbps")
+        if self.language and self.language != "und":
+            parts.append(f"[{self.language}]")
+        if self.title:
+            parts.append(f'"{self.title}"')
+        return " - ".join(parts) if parts else "Audio Track"
 
     @classmethod
     def from_dict(cls, data: dict) -> "StreamInfo":
@@ -43,6 +107,7 @@ class StreamInfo:
             if int(den) > 0:
                 fps = round(int(num) / int(den), 2)
 
+        title = tags.get("title") or tags.get("name") or tags.get("handler_name", "")
         return cls(
             index=data.get("index", 0),
             codec_type=data.get("codec_type", "unknown"),
@@ -59,7 +124,11 @@ class StreamInfo:
             bitrate=int(data.get("bit_rate", 0)),
             duration=float(data.get("duration", 0)),
             language=tags.get("language", ""),
-            title=tags.get("title", ""),
+            title=title,
+            color_space=str(data.get("color_space") or ""),
+            color_primaries=str(data.get("color_primaries") or ""),
+            color_trc=str(data.get("color_transfer") or data.get("color_trc") or ""),
+            bits_per_raw_sample=int(data.get("bits_per_raw_sample") or data.get("bits_per_sample") or 0),
         )
 
 
@@ -85,11 +154,19 @@ class MediaInfo:
         return None
 
     @property
+    def video_streams(self) -> list:
+        return [s for s in self.streams if s.codec_type == "video"]
+
+    @property
     def audio_stream(self) -> Optional[StreamInfo]:
         for s in self.streams:
             if s.codec_type == "audio":
                 return s
         return None
+
+    @property
+    def audio_streams(self) -> list:
+        return [s for s in self.streams if s.codec_type == "audio"]
 
     @property
     def subtitle_streams(self) -> list:
@@ -130,21 +207,43 @@ class MediaInfo:
 
     @property
     def resolution_label(self) -> str:
-        h = self.height
-        if h >= 2160:
-            return "4K"
-        elif h >= 1440:
-            return "1440p"
-        elif h >= 1080:
-            return "1080p"
-        elif h >= 720:
-            return "720p"
-        elif h >= 480:
-            return "480p"
-        elif h >= 360:
+        vs = self.video_stream
+        if not vs:
+            return "Audio Only" if self.has_audio else "N/A"
+        w, h = vs.width, vs.height
+        if w >= 7600 or h >= 4300:
+            return "8K UHD"
+        elif w >= 3800 or h >= 2100:
+            return "4K UHD"
+        elif w >= 2500 or h >= 1000 and (w >= 2400 or h >= 1400):
+            return "1440p (2K)"
+        elif w >= 1900 or h >= 1000 or (w >= 1800 and h >= 750):
+            return "1080p (Full HD)"
+        elif w >= 1200 or h >= 700 or (w >= 1100 and h >= 500):
+            return "720p (HD)"
+        elif w >= 700 or h >= 480:
+            return "480p (SD)"
+        elif w >= 480 or h >= 360:
             return "360p"
-        else:
+        elif h > 0:
             return f"{h}p"
+        return "Unknown"
+
+    @property
+    def quality_badge(self) -> str:
+        """Concise one-line summary of file media quality."""
+        if not self.has_video and self.has_audio:
+            aus = self.audio_stream
+            return f"Audio ({aus.codec_name.upper()} {aus.sample_rate}Hz)"
+        vs = self.video_stream
+        if not vs:
+            return "Unknown"
+        parts = [self.resolution_label]
+        if vs.is_hdr:
+            parts.append(vs.hdr_format)
+        elif vs.bit_depth > 8:
+            parts.append(f"{vs.bit_depth}-bit")
+        return " ".join(parts)
 
     @property
     def duration_formatted(self) -> str:
@@ -186,21 +285,43 @@ def probe(file_path: str | Path, ffprobe_path: str = "ffprobe") -> MediaInfo:
                 ctx = s.codec_context
                 if s.type == "video":
                     fps = float(s.average_rate) if s.average_rate else 0.0
+                    v_bitrate = ctx.bit_rate if ctx and ctx.bit_rate else 0
+                    if not v_bitrate and "BPS" in s.metadata:
+                        try:
+                            v_bitrate = int(s.metadata["BPS"])
+                        except ValueError:
+                            pass
+                    profile_name = getattr(ctx, "profile", "") or ""
                     streams.append(StreamInfo(
                         index=s.index,
                         codec_type="video",
                         codec_name=ctx.name if ctx else "",
                         codec_long_name=ctx.long_name if ctx else "",
+                        profile=str(profile_name),
                         width=ctx.width if ctx else 0,
                         height=ctx.height if ctx else 0,
                         fps=fps,
                         pix_fmt=ctx.pix_fmt if ctx else "",
-                        bitrate=ctx.bit_rate if ctx else 0,
+                        bitrate=v_bitrate,
                         duration=duration,
                         language=s.metadata.get("language", ""),
-                        title=s.metadata.get("title", "")
+                        title=s.metadata.get("title", ""),
+                        color_space=str(getattr(ctx, "colorspace", "") or ""),
+                        color_primaries=str(getattr(ctx, "color_primaries", "") or ""),
+                        color_trc=str(getattr(ctx, "color_trc", "") or ""),
+                        bits_per_raw_sample=int(getattr(ctx, "bits_per_raw_sample", 0) or 0),
                     ))
                 elif s.type == "audio":
+                    layout_name = ""
+                    if hasattr(ctx, "layout") and ctx.layout:
+                        layout_name = getattr(ctx.layout, "name", "")
+                    title = s.metadata.get("title") or s.metadata.get("name", "")
+                    a_bitrate = ctx.bit_rate if ctx and ctx.bit_rate else 0
+                    if not a_bitrate and "BPS" in s.metadata:
+                        try:
+                            a_bitrate = int(s.metadata["BPS"])
+                        except ValueError:
+                            pass
                     streams.append(StreamInfo(
                         index=s.index,
                         codec_type="audio",
@@ -208,10 +329,11 @@ def probe(file_path: str | Path, ffprobe_path: str = "ffprobe") -> MediaInfo:
                         codec_long_name=ctx.long_name if ctx else "",
                         sample_rate=ctx.sample_rate if ctx else 0,
                         channels=ctx.channels if ctx else 0,
-                        bitrate=ctx.bit_rate if ctx else 0,
+                        channel_layout=layout_name,
+                        bitrate=a_bitrate,
                         duration=duration,
                         language=s.metadata.get("language", ""),
-                        title=s.metadata.get("title", "")
+                        title=title
                     ))
                 elif s.type == "subtitle":
                     streams.append(StreamInfo(

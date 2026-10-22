@@ -25,17 +25,17 @@ class SubtitleOps(BaseOperation):
         if operation_id == 86:
             sub = str(Path(params["second_input_path"])).replace("\\", "/").replace(":", "\\:")
             output_path = params.get("output_path") or self._build_output_path(input_path, "_hardsubbed", ".mp4")
-            cmd_args = ["-i", i, "-vf", f"subtitles='{sub}'", str(output_path)]
+            cmd_args = ["-i", i, "-vf", f"subtitles='{sub}'", "-movflags", "+faststart", str(output_path)]
         elif operation_id == 87:
             sub = str(Path(params["second_input_path"]))
             output_path = params.get("output_path") or self._build_output_path(input_path, "_subtitled", ".mp4")
-            cmd_args = ["-i", i, "-i", sub, "-c:v", "copy", "-c:a", "copy", "-c:s", "mov_text", str(output_path)]
+            cmd_args = ["-i", i, "-i", sub, "-c:v", "copy", "-c:a", "copy", "-c:s", "mov_text", "-max_interleave_delta", "0", "-max_muxing_queue_size", "2048", "-movflags", "+faststart", str(output_path)]
         elif operation_id == 88:
             output_path = params.get("output_path") or self._build_output_path(input_path, "", ".srt")
             cmd_args = ["-i", i, "-map", "0:s:0", str(output_path)]
         elif operation_id == 89:
             output_path = params.get("output_path") or self._build_output_path(input_path, "_nosubs", ".mkv")
-            cmd_args = ["-i", i, "-map", "0:v", "-map", "0:a", "-c", "copy", str(output_path)]
+            cmd_args = ["-i", i, "-map", "0:v", "-map", "0:a", "-c", "copy", "-max_interleave_delta", "0", "-max_muxing_queue_size", "2048", str(output_path)]
         else:
             return OperationResult(False, f"Unknown operation ID: {operation_id}")
 

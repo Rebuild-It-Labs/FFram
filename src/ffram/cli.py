@@ -26,9 +26,31 @@ from ffram.ui.menu import (
 def main():
     parser = argparse.ArgumentParser(description="ffram - Fast FFmpeg Renderer for Audio and Moving-pictures")
     parser.add_argument("--file", "-f", help="Direct input file path")
+    parser.add_argument("--info", "-i", dest="info_file", help="Inspect and display detailed quality info for a video/audio file")
     parser.add_argument("--worker", action="store_true", help="Start as a cluster worker node")
     parser.add_argument("--port", type=int, default=8000, help="Port for worker node")
+    parser.add_argument("command", nargs="*", help="Optional positional command (e.g. info <file>)")
     args, _ = parser.parse_known_args()
+
+    # Handle positional subcommands like: ffram info <file> or ffram probe <file>
+    if args.command and len(args.command) >= 2 and args.command[0].lower() in ["info", "probe", "details"]:
+        args.info_file = args.command[1]
+
+    if args.info_file:
+        from ffram.core.probe import probe
+        from ffram.ui.console import print_media_info
+        info_path = Path(args.info_file.strip('"').strip("'"))
+        if not info_path.exists():
+            console.print(f"[bold red]File not found:[/bold red] {info_path}")
+            sys.exit(1)
+        print_banner()
+        try:
+            info = probe(info_path)
+            print_media_info(info)
+        except Exception as e:
+            console.print(f"[bold red]Failed to inspect file:[/bold red] {e}")
+            sys.exit(1)
+        sys.exit(0)
 
     if args.worker:
         from ffram.core.cluster import WorkerNode

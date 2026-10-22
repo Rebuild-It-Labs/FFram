@@ -17,6 +17,7 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 from rich.theme import Theme
+from rich.markup import escape
 from rich import box
 import pyfiglet
 
@@ -54,10 +55,11 @@ def print_media_info(info):
     except Exception:
         mtime = "Unknown"
         
-    table = Table(title=f"[FILE] {info.file_path.name}", box=box.ROUNDED,
+    badge = f"  •  [bold yellow]{info.quality_badge}[/bold yellow]" if hasattr(info, "quality_badge") else ""
+    table = Table(title=f"[FILE] {info.file_path.name}{badge}", box=box.ROUNDED,
                   border_style="#6272a4", title_style="bold #f8f8f2", padding=(0, 1))
-    table.add_column("Property", style="#8be9fd", min_width=16)
-    table.add_column("Value", style="#f8f8f2", min_width=30)
+    table.add_column("Property", style="#8be9fd", min_width=18)
+    table.add_column("Value", style="#f8f8f2", min_width=32)
 
     table.add_row("Path", str(info.file_path.parent))
     table.add_row("Extension", info.file_path.suffix)
@@ -65,30 +67,51 @@ def print_media_info(info):
     table.add_row("Format", f"{info.format_name} ({info.format_long_name})")
     table.add_row("Duration", info.duration_formatted)
     table.add_row("Size", info.size_formatted)
-    table.add_row("Bitrate", f"{info.bitrate // 1000} kbps" if info.bitrate else "N/A")
+    table.add_row("Overall Bitrate", f"{info.bitrate // 1000} kbps" if info.bitrate else "N/A")
 
     if info.has_video:
         vs = info.video_stream
         table.add_row("", "")
-        table.add_row("Video Codec", f"{vs.codec_name} ({vs.profile})" if vs.profile else vs.codec_name)
-        table.add_row("Resolution", f"{vs.width}x{vs.height} ({info.resolution_label})")
+        table.add_row("Video Quality", f"[bold cyan]{info.resolution_label}[/bold cyan] ({vs.width}x{vs.height})")
+        table.add_row("Video Codec", f"{vs.codec_name.upper()} ({vs.profile})" if vs.profile else vs.codec_name.upper())
+        table.add_row("Dynamic Range", f"[bold green]{vs.hdr_format}[/bold green] ({vs.bit_depth}-bit, {vs.pix_fmt})")
         table.add_row("Frame Rate", f"{vs.fps} fps")
-        table.add_row("Pixel Format", vs.pix_fmt)
+        if vs.bitrate and vs.bitrate > 0:
+            table.add_row("Video Bitrate", f"{vs.bitrate // 1000} kbps")
 
-    if info.has_audio:
-        a = info.audio_stream
+    if info.audio_streams:
         table.add_row("", "")
-        table.add_row("Audio Codec", a.codec_name)
-        table.add_row("Sample Rate", f"{a.sample_rate} Hz")
-        table.add_row("Channels", f"{a.channels} ({a.channel_layout})" if a.channel_layout else str(a.channels))
-        if a.bitrate:
-            table.add_row("Audio Bitrate", f"{a.bitrate // 1000} kbps")
+        if len(info.audio_streams) == 1:
+            a = info.audio_stream
+            ch_str = f"{a.channels}ch ({a.channel_layout})" if a.channel_layout else f"{a.channels}ch"
+            table.add_row("Audio Quality", f"[bold cyan]{a.codec_name.upper()}[/bold cyan] • {ch_str}")
+            table.add_row("Sample Rate", f"{a.sample_rate:,} Hz")
+            if a.bitrate:
+                table.add_row("Audio Bitrate", f"{a.bitrate // 1000} kbps")
+            if a.language and a.language != "und":
+                table.add_row("Language", a.language)
+            if a.title:
+                table.add_row("Track Title", a.title)
+        else:
+            table.add_row("Audio Tracks", f"[bold cyan]{len(info.audio_streams)} Tracks Found[/bold cyan]")
+            for idx, a in enumerate(info.audio_streams, 1):
+                ch_str = a.channel_layout if a.channel_layout else f"{a.channels}ch"
+                br_str = f" • {a.bitrate // 1000} kbps" if a.bitrate else ""
+                sr_str = f" • {a.sample_rate:,} Hz" if a.sample_rate else ""
+                lang_str = f"[dim]\\[{escape(a.language)}][/dim] " if a.language and a.language != "und" else ""
+                title_str = f' - "{escape(a.title)}"' if a.title else ""
+                table.add_row(
+                    f"  Track {idx}",
+                    f"{lang_str}[bold yellow]{a.codec_name.upper()}[/bold yellow] ({ch_str}){sr_str}{br_str}{title_str}"
+                )
 
     if info.subtitle_streams:
         table.add_row("", "")
-        for idx, sub in enumerate(info.subtitle_streams):
-            lang = sub.language or "unknown"
-            table.add_row(f"Subtitle {idx + 1}", f"{sub.codec_name} ({lang})")
+        table.add_row("Subtitles", f"{len(info.subtitle_streams)} Subtitle Stream(s)")
+        for idx, sub in enumerate(info.subtitle_streams, 1):
+            lang = f"[dim]\\[{escape(sub.language)}][/dim] " if sub.language and sub.language != "und" else ""
+            title_str = f' - "{escape(sub.title)}"' if sub.title else ""
+            table.add_row(f"  Subtitle {idx}", f"{lang}{sub.codec_name.upper()}{title_str}")
 
     console.print(table)
     console.print()
@@ -108,8 +131,9 @@ def print_info(msg):
 
 def print_command(cmd):
     import subprocess
+    from rich.markup import escape
     s = subprocess.list2cmdline([str(a) for a in cmd]) if isinstance(cmd, (list, tuple)) else str(cmd)
-    console.print(Panel(f"[command]{s}[/command]", title="[dim]FFmpeg Command[/dim]", border_style="dim yellow", padding=(0, 1)))
+    console.print(Panel(f"[command]{escape(s)}[/command]", title="[dim]FFmpeg Command[/dim]", border_style="dim yellow", padding=(0, 1)))
 
 def print_section(title):
     console.print(f"\n  [category]> {title}[/category]")

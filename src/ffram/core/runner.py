@@ -216,6 +216,25 @@ def run_ffmpeg(
                 if new_cmd == cmd:
                     new_cmd = None  # No encoder was replaced
 
+            # Check for Muxing Queue Overflow or Interleaving Errors
+            queue_errors = [
+                "Too many packets buffered for output stream",
+                "max_muxing_queue_size",
+                "Buffer queue full",
+                "Queue input is backward in time",
+            ]
+            if any(e in stderr_text for e in queue_errors) and new_cmd is None:
+                new_cmd = list(cmd)
+                # Insert flags before the output file (last item) if possible
+                insert_pos = max(0, len(new_cmd) - 1)
+                extra = []
+                if "-max_muxing_queue_size" not in new_cmd:
+                    extra.extend(["-max_muxing_queue_size", "9999"])
+                if "-max_interleave_delta" not in new_cmd:
+                    extra.extend(["-max_interleave_delta", "0"])
+                if extra:
+                    new_cmd = new_cmd[:insert_pos] + extra + new_cmd[insert_pos:]
+
             # Retry if a heuristic matched
             if new_cmd is not None:
                 return run_ffmpeg(

@@ -62,3 +62,6 @@ venv.bak/
 .vscode/
 .idea/
 *.swp
+
+#Folders
+tests

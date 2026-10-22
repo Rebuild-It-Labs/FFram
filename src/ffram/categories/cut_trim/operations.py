@@ -29,11 +29,11 @@ class CutTrimOps(BaseOperation):
         o = str(output_path)
 
         cmd_map = {
-            38: ["-i", i, "-t", dur, "-c", "copy", o],
-            39: ["-ss", start, "-i", i, "-c", "copy", o],
-            40: ["-ss", start, "-to", end, "-i", i, "-c", "copy", o],
-            41: ["-ss", start, "-i", i, "-t", dur, "-c", "copy", o],
-            42: ["-ss", start, "-i", i, "-t", dur, "-c:v", "libx264", "-c:a", "aac", o],
+            38: ["-i", i, "-t", dur, "-c", "copy", "-avoid_negative_ts", "make_zero", "-max_interleave_delta", "0", "-max_muxing_queue_size", "2048", o],
+            39: ["-ss", start, "-i", i, "-c", "copy", "-avoid_negative_ts", "make_zero", "-max_interleave_delta", "0", "-max_muxing_queue_size", "2048", o],
+            40: ["-ss", start, "-to", end, "-i", i, "-c", "copy", "-avoid_negative_ts", "make_zero", "-max_interleave_delta", "0", "-max_muxing_queue_size", "2048", o],
+            41: ["-ss", start, "-i", i, "-t", dur, "-c", "copy", "-avoid_negative_ts", "make_zero", "-max_interleave_delta", "0", "-max_muxing_queue_size", "2048", o],
+            42: ["-ss", start, "-i", i, "-t", dur, "-c:v", "libx264", "-c:a", "aac", "-movflags", "+faststart", o],
         }
 
         if operation_id not in cmd_map:

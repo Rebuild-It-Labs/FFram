@@ -259,6 +259,199 @@ def prompt_operation_params(op_info, params):
         if inquirer.confirm(message="Use custom speed factor?", default=False).execute():
             params["speed_factor"] = float(inquirer.text(message="Speed factor:", default="2.0").execute())
 
+    elif op_info.id == 103:
+        target_path = Path(params["input_path"])
+        source_path = Path(params["second_input_path"])
+
+        try:
+            source_info = probe(source_path)
+            target_info = probe(target_path)
+        except Exception as e:
+            print_error(f"Error inspecting files: {e}")
+            return params
+
+        source_tracks = source_info.audio_streams
+        if not source_tracks:
+            print_warning(f"No audio tracks found in source file: {source_path.name}")
+            return params
+
+        target_tracks = target_info.audio_streams
+
+        console.print(f"\n  [cyan bold]Target Video (Receives audio):[/cyan bold] [path]{target_path.name}[/path]")
+        console.print(f"  [dim]{target_info.resolution_label} | {target_info.video_codec} | {len(target_tracks)} audio track(s) currently[/dim]")
+
+        console.print(f"\n  [cyan bold]Source Video (Audio donor):[/cyan bold] [path]{source_path.name}[/path]")
+        console.print(f"  [dim]{len(source_tracks)} audio track(s) detected[/dim]\n")
+
+        # Confirm or Swap roles
+        if inquirer.confirm(message="Swap roles? (Current Target will receive audio from Source)", default=False).execute():
+            target_path, source_path = source_path, target_path
+            target_info, source_info = source_info, target_info
+            target_tracks, source_tracks = source_tracks, target_tracks
+            params["input_path"] = str(target_path)
+            params["second_input_path"] = str(source_path)
+            console.print(f"  [green]Roles swapped:[/green] Target is now [path]{target_path.name}[/path]\n")
+
+        # 1. Select track from source video
+        if len(source_tracks) == 1:
+            console.print(f"  [green]Auto-selected sole audio track:[/green] {source_tracks[0].audio_summary}")
+            selected_idx = 0
+        else:
+            track_choices = [
+                {"name": f"Track #{i+1}: {track.audio_summary}", "value": i}
+                for i, track in enumerate(source_tracks)
+            ]
+            selected_idx = inquirer.select(
+                message="Select audio track to extract from source video:",
+                choices=track_choices,
+                default=0,
+            ).execute()
+
+        params["source_audio_index"] = selected_idx
+        selected_track = source_tracks[selected_idx]
+
+        # 2. Select placement in target video
+        placement_choices = [
+            {
+                "name": f"1. Keep existing audio & APPEND as secondary track (Target will have {len(target_tracks) + 1} tracks)",
+                "value": "add_secondary"
+            },
+            {
+                "name": "2. Set as PRIMARY audio track & DEFAULT (Keep existing audio after it)",
+                "value": "make_primary"
+            },
+            {
+                "name": "3. ONLY new audio (Replace/remove all existing audio from Target video)",
+                "value": "only_new"
+            },
+        ]
+
+        if len(target_tracks) >= 2:
+            placement_choices.append({
+                "name": f"4. Replace a specific audio track in Target video (choose 1 of {len(target_tracks)})",
+                "value": "replace_specific"
+            })
+
+        default_placement = "add_secondary" if target_tracks else "only_new"
+        placement_mode = inquirer.select(
+            message="How should this audio track be placed in the target video?",
+            choices=placement_choices,
+            default=default_placement,
+        ).execute()
+        params["placement_mode"] = placement_mode
+
+        if placement_mode == "replace_specific":
+            rep_choices = [
+                {"name": f"Track #{i+1}: {track.audio_summary}", "value": i}
+                for i, track in enumerate(target_tracks)
+            ]
+            params["target_replace_index"] = inquirer.select(
+                message="Select which existing track in Target video to replace:",
+                choices=rep_choices,
+                default=0,
+            ).execute()
+
+        # 3. Duration handling
+        duration_choice = inquirer.select(
+            message="Duration handling:",
+            choices=[
+                {"name": f"Match Target Video duration ({target_info.duration_formatted}) [Recommended]", "value": "video"},
+                {"name": "Cut to shortest stream (-shortest)", "value": "shortest"},
+            ],
+            default="video",
+        ).execute()
+        params["duration_mode"] = duration_choice
+
+        # 4. Subtitles
+        if target_info.subtitle_streams:
+            params["include_subtitles"] = inquirer.confirm(
+                message=f"Keep subtitles from Target video ({len(target_info.subtitle_streams)} track(s))?",
+                default=True,
+            ).execute()
+
+        # 5. Optional metadata customization
+        if inquirer.confirm(message="Customize track language/title for the new audio?", default=False).execute():
+            default_lang = selected_track.language if selected_track.language and selected_track.language != "und" else "eng"
+            params["new_track_lang"] = inquirer.text(message="Track language code (e.g. eng, spa, fra, jpn):", default=default_lang).execute()
+            params["new_track_title"] = inquirer.text(message="Track title/description:", default=selected_track.title or "").execute()
+
+    elif op_info.id == 104:
+        top_path = Path(params["input_path"])
+        bot_path = Path(params["second_input_path"])
+
+        try:
+            top_info = probe(top_path)
+            bot_info = probe(bot_path)
+        except Exception as e:
+            print_error(f"Error inspecting comparison videos: {e}")
+            return params
+
+        console.print(f"\n  [cyan bold]Top Video (Reference):[/cyan bold] [path]{top_path.name}[/path]")
+        console.print(f"  [dim]{top_info.resolution_label} ({top_info.width}x{top_info.height}) | {top_info.video_codec} | {top_info.duration_formatted}[/dim]")
+
+        console.print(f"\n  [cyan bold]Bottom Video (Comparison):[/cyan bold] [path]{bot_path.name}[/path]")
+        console.print(f"  [dim]{bot_info.resolution_label} ({bot_info.width}x{bot_info.height}) | {bot_info.video_codec} | {bot_info.duration_formatted}[/dim]\n")
+
+        # 1. Custom labels
+        default_top = f"Top: {top_path.name}"
+        default_bot = f"Bottom: {bot_path.name}"
+        if inquirer.confirm(message="Customize labels on videos?", default=False).execute():
+            params["top_label"] = inquirer.text(message="Top video label:", default=default_top).execute()
+            params["bottom_label"] = inquirer.text(message="Bottom video label:", default=default_bot).execute()
+        else:
+            params["top_label"] = default_top
+            params["bottom_label"] = default_bot
+
+        # 2. Label Position
+        params["label_position"] = inquirer.select(
+            message="Label position at top of each video:",
+            choices=[
+                {"name": "Top-Left (Badge with dark pill) [Recommended]", "value": "top_left"},
+                {"name": "Top-Center (Centered banner)", "value": "top_center"},
+            ],
+            default="top_left",
+        ).execute()
+
+        # 3. Target resolution
+        w_max = max(top_info.width or 1280, bot_info.width or 1280)
+        params["target_width"] = inquirer.select(
+            message="Comparison collage width:",
+            choices=[
+                {"name": f"Auto / Maximum Width ({w_max}px) [Best for visual comparison]", "value": "max"},
+                {"name": "1080p Width (1920px)", "value": "1080p"},
+                {"name": "720p Width (1280px)", "value": "720p"},
+            ],
+            default="max",
+        ).execute()
+
+        # 4. Divider line
+        params["divider_line"] = inquirer.confirm(
+            message="Add colored divider line between videos?", default=True
+        ).execute()
+
+        # 5. Audio source
+        audio_choices = [
+            {"name": "Keep audio from Top video [Default]", "value": "top"},
+            {"name": "Keep audio from Bottom video", "value": "bottom"},
+            {"name": "Mix audio from both videos", "value": "mix"},
+            {"name": "Mute (Silent comparison video)", "value": "mute"},
+        ]
+        params["audio_source"] = inquirer.select(
+            message="Audio source for comparison video:",
+            choices=audio_choices,
+            default="top",
+        ).execute()
+
+        # 6. Quality (CRF)
+        params["crf"] = inquirer.select(
+            message="Collage video quality:",
+            choices=[
+                {"name": "Near Lossless (CRF 18) [Recommended for quality comparison]", "value": "18"},
+                {"name": "Standard High (CRF 23)", "value": "23"},
+            ],
+            default="18",
+        ).execute()
+
     return params
 
 
@@ -325,14 +518,17 @@ def show_gpu_info():
 
 
 def get_second_input_filters(op_info):
-    if "audio" in op_info.second_input_types:
-        return AUDIO_FILTERS
-    if "image" in op_info.second_input_types:
-        return IMAGE_FILTERS
-    if "subtitle" in op_info.second_input_types:
-        return SUBTITLE_FILTERS
-    if "video" in op_info.second_input_types:
+    types = set(op_info.second_input_types)
+    if "video" in types and "audio" in types:
+        return MEDIA_FILTERS
+    if "video" in types:
         return VIDEO_FILTERS
+    if "audio" in types:
+        return AUDIO_FILTERS
+    if "image" in types:
+        return IMAGE_FILTERS
+    if "subtitle" in types:
+        return SUBTITLE_FILTERS
     return MEDIA_FILTERS
 
 
@@ -377,7 +573,13 @@ def execute_operation(operation_id, initial_file=None):
             input_file = Path(initial_file)
             console.print(f"  [path]Selected file: {input_file}[/path]")
         else:
-            input_file = prompt_file_input("Select input file")
+            if target_op.id == 103:
+                prompt_title = "Select Target Video (receives audio)"
+            elif target_op.id == 104:
+                prompt_title = "Select Top Video (e.g. Reference / Original)"
+            else:
+                prompt_title = "Select input file"
+            input_file = prompt_file_input(prompt_title)
             if not input_file:
                 print_warning("Operation cancelled.")
                 return
