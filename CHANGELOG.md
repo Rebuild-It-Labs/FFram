@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.3] - 2026-10-04
 ### Added
 - Top-Bottom Collage Comparison (Operation 104): Stack two videos vertically for visual quality comparison with filename labels overlaid at the top end of each video, automatic aspect-ratio scaling, and optional colored divider line.
 - Multi-audio track management (Operation 103): Select and extract a specific audio track from videos with multiple audio streams and losslessly remux it into a target video (options for only new audio, secondary track, primary default, or specific track replacement).
